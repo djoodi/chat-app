@@ -2,19 +2,24 @@ const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const passport = require('passport');
-const passportLocal = require('passport-local').Strategy;
+const passportLocalStrategy = require('passport-local').Strategy;
 const cookieParsrer = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-const { Server } = require('socket.io');
 const http = require('http');
 const User = require('./schemas/user');
+const Message = require('./schemas/message');
 
 const app = express();
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = require("socket.io")(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true
+    }
+});
 
 mongoose.connect('mongodb://localhost:27017/chat-app', {
     useNewUrlParser: true,
@@ -40,7 +45,9 @@ app.use(session({
 app.use(cookieParsrer("secretcode"));
 app.use(passport.initialize());
 app.use(passport.session());
-require('./passportConfigs')(passport);
+passport.use(new passportLocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // end of middleware
 
@@ -60,17 +67,17 @@ app.post('/login', (req, res, next)=> {
 });
 // 
 app.post('/register', (req, res)=> {
-    User.findOne({username: req.body.username}, async (err, doc) => {
+
+    const {username, password} = req.body;
+
+    User.findOne({username}, async (err, doc) => {
         if (err) throw err;
         if (doc) res.send('User Already Exists');
         if (!doc) {
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            const newUser = new User({
-                username: req.body.username,
-                password: hashedPassword
-            });
+            const newUser = new User({username});
+            const registeredUser = await User.register(newUser, password);
             await newUser.save();
-            res.send('User Created');
+            res.send('User Created'); 
         }
     })
     console.log(req.body);
@@ -90,7 +97,11 @@ app.get('/logout', (req, res) => {
 
 // socket.io events
 io.on('connection', (socket)=> {
-    console.log('a user connected');
+    console.log('a user connected', socket.id);
+
+    socket.on("message", (msg)=> {
+        console.log(msg);
+    })
 });
 
 server.listen(4000, ()=> {

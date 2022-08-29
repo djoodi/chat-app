@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Axios from 'axios';
 import {io} from 'socket.io-client';
 
-// const socket = io('http://localhost:4000',{
-//   withCredentials: true,
-//   extraHeaders: {
-//     "chat-app-socket": "1234",
-//     "Access-Control-Allow-Origin": "true"
-//   }
-// });
+const socket = io('http://localhost:4000', {
+  withCredentials: true,
+});
 
 function App() {
+
+  const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
 
   const [registerUsername, setRegisterUsername] = useState<string>("");
   const [loginUsername, setLoginUsername] = useState<string>("");
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [registerPassword, setRegisterPassword] = useState<string>("");
   const [data, setData] = useState<any>(null)
+  const [message, setMessage] = useState<string>("")
 
   const register = () => {
     Axios({
@@ -30,6 +29,7 @@ function App() {
       url: 'http://localhost:4000/register'
     }).then((res) => console.log(res));
   };
+
   const login = () => {
     Axios({
       method: 'POST',
@@ -41,6 +41,7 @@ function App() {
       url: 'http://localhost:4000/login'
     }).then((res) => console.log(res));
   };
+
   const getUser = () => {
     Axios({
       method: 'GET',
@@ -48,13 +49,34 @@ function App() {
       url: 'http://localhost:4000/user'
     }).then((res) => setData(res.data));
   };
+
   const logout = () => {
     Axios({
       method: 'GET',
       withCredentials: true,
       url: 'http://localhost:4000/logout'
     }).then((res) => console.log(res));
+  };
+
+  const sendMessage = () => {
+    socket.emit("message", message);
   }
+
+  useEffect(() => {
+    socket.on('connect', ()=> {
+      setIsConnected(true);
+    });
+
+    socket.on('disconnect', () => {
+      setIsConnected(false);
+    });
+  
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+    }
+  }, [])
+  
 
   return (
     <div className="App">
@@ -84,6 +106,14 @@ function App() {
       <div>
         <h1>Logout</h1>
         <button onClick={logout}>Submit</button>
+      </div>
+
+      <p>{}</p>
+
+      <div>
+        <h3>Create message</h3>
+        <input type="text" placeholder="send a message" onChange={e=> setMessage(e.target.value)}/>
+        <button onClick={sendMessage}>Send</button>
       </div>
 
     </div>
