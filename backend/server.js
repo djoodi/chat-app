@@ -10,16 +10,11 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const User = require('./schemas/user');
 const Message = require('./schemas/message');
+const userRoutes = require('./routes/users');
 
 const app = express();
-
 const server = http.createServer(app);
-const io = require("socket.io")(server, {
-    cors: {
-      origin: "http://localhost:3000",
-      credentials: true
-    }
-});
+
 
 mongoose.connect('mongodb://localhost:27017/chat-app', {
     useNewUrlParser: true,
@@ -36,11 +31,13 @@ app.use(cors({
     credentials: true // <-- location of the react app we are connecting to
 }));
 
-app.use(session({
+const sessionMiddleware = session({
     secret: "secretcode",
     resave: true,
     saveUninitialized: true
-}));
+});
+
+app.use(sessionMiddleware);
 
 app.use(cookieParsrer("secretcode"));
 app.use(passport.initialize());
@@ -52,55 +49,59 @@ passport.deserializeUser(User.deserializeUser());
 // end of middleware
 
 // routes
-app.post('/login', (req, res, next)=> {
-    passport.authenticate("local", (err,user,info)=> {
-        if (err) throw err;
-        if (!user) res.send ('No User Exists');
-        else {
-            req.logIn(user, err=> {
-                if (err) throw err;
-                res.send('Successfully Authenticated');
-                console.log(req.user);
-            });
-        }
-    })(req, res, next);
-});
-// 
-app.post('/register', (req, res)=> {
-
-    const {username, password} = req.body;
-
-    User.findOne({username}, async (err, doc) => {
-        if (err) throw err;
-        if (doc) res.send('User Already Exists');
-        if (!doc) {
-            const newUser = new User({username});
-            const registeredUser = await User.register(newUser, password);
-            await newUser.save();
-            res.send('User Created'); 
-        }
-    })
-    console.log(req.body);
-});
-
-app.get('/user', (req, res)=> {
-    res.send(req.user);
-});
-
-app.get('/logout', (req, res) => {
-    if (req.user) req.logOut((err)=> {
-        if (err) throw err;
-        res.send('Logged out successfully');
-    })
-})
+app.use('/', userRoutes);
 
 
 // socket.io events
-io.on('connection', (socket)=> {
-    console.log('a user connected', socket.id);
+const io = require("socket.io")(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true
+    }
+});
 
-    socket.on("message", (msg)=> {
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+io.use(wrap(sessionMiddleware));
+io.use(wrap(passport.initialize()));
+io.use(wrap(passport.session()));
+
+io.use((socket, next)=>{
+    
+    console.log('checking authorization')
+
+    if (socket.request.user) {
+        next();
+    } else {
+        console.log('not authorized');
+        next(new Error("unauthorized"));
+    }
+})
+
+io.on('connection', (socket)=> {
+    console.log('new connection', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('disconnected', socket.id);
+    })
+
+    socket.on('whoami', (cb)=>{
+        cb(socket.request.user ? socket.request.user.username : '');
+    })
+
+    const session = socket.request.session;
+    console.log(`saving sid ${socket.id} in session ${session.id}`);
+    session.socketId = socket.id;
+    session.save();
+    
+    socket.on("message", async (msg)=> {
         console.log(msg);
+        const newMessage = new Message({
+            timestamp: Date(),
+            message: msg,
+            author: socket.request.user._id
+        });
+        await newMessage.save();
     })
 });
 

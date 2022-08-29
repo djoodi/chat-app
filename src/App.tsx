@@ -5,6 +5,7 @@ import {io} from 'socket.io-client';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
+  autoConnect: false
 });
 
 function App() {
@@ -16,6 +17,8 @@ function App() {
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [registerPassword, setRegisterPassword] = useState<string>("");
   const [data, setData] = useState<any>(null)
+  const [socketID, setSocketID] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>("")
 
   const register = () => {
@@ -39,7 +42,9 @@ function App() {
       },
       withCredentials: true,
       url: 'http://localhost:4000/login'
-    }).then((res) => console.log(res));
+    }).then((res)=>{
+      console.log(`Logged in`);
+    });
   };
 
   const getUser = () => {
@@ -58,12 +63,27 @@ function App() {
     }).then((res) => console.log(res));
   };
 
+  const connectToSocket = () => {
+    socket.connect();
+  }
+
   const sendMessage = () => {
     socket.emit("message", message);
   }
 
+  const getSocketInfo = () => {
+    socket.emit('whoami', (username: string)=> {
+      setUsername(username);
+    })
+  }
+
   useEffect(() => {
+
     socket.on('connect', ()=> {
+      setSocketID(socket.id);
+      
+      getSocketInfo();
+
       setIsConnected(true);
     });
 
@@ -82,33 +102,40 @@ function App() {
     <div className="App">
       
       <div>
-        <h1>Register</h1>
+        <h3>Register</h3>
         <input type="text" placeholder="username" onChange={e => setRegisterUsername(e.target.value)}/>
         <input type="password" placeholder="password" onChange={e => setRegisterPassword(e.target.value)}/>
         <button onClick={register}>Submit</button>
       </div>
 
       <div>
-        <h1>Login</h1>
+        <h3>Login</h3>
         <input type="text" placeholder="username" onChange={e => setLoginUsername(e.target.value)}/>
         <input type="password" placeholder="password" onChange={e => setLoginPassword(e.target.value)}/>
         <button onClick={login}>Submit</button>
       </div>
 
       <div>
-        <h1>Get User</h1>
+        <h3>Get User</h3>
         <button onClick={getUser}>Submit</button>
         {
-          data? <h1>Welcome Back {data.username}</h1> : null
+          data? <h3>Welcome Back {data.username}</h3> : null
         }
       </div>
 
       <div>
-        <h1>Logout</h1>
+        <h3>Logout</h3>
         <button onClick={logout}>Submit</button>
       </div>
 
       <p>{}</p>
+
+      <h1>Socket stuff</h1>
+
+      <button onClick={connectToSocket}>Connect</button>
+
+      <p>Socket ID: {socketID}</p>
+      <p>Username: {username}</p>
 
       <div>
         <h3>Create message</h3>

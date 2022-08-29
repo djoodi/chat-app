@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const MessageSchema = new Schema({
     timestamp: Date,
+    message: String,
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
