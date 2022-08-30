@@ -2,11 +2,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MessageSchema = new Schema({
-    timestamp: Date,
-    message: String,
+    timestamp: {
+        type: Date,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
     author: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true,
     }
 });
 

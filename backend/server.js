@@ -11,6 +11,8 @@ const http = require('http');
 const User = require('./schemas/user');
 const Message = require('./schemas/message');
 const userRoutes = require('./routes/users');
+const serverRoutes = require('./routes/servers');
+const Server = require('./schemas/server');
 
 const app = express();
 const server = http.createServer(app);
@@ -50,6 +52,7 @@ passport.deserializeUser(User.deserializeUser());
 
 // routes
 app.use('/', userRoutes);
+app.use('/servers', serverRoutes);
 
 
 // socket.io events
@@ -94,14 +97,17 @@ io.on('connection', (socket)=> {
     session.socketId = socket.id;
     session.save();
     
-    socket.on("message", async (msg)=> {
-        console.log(msg);
+    socket.on("message", async (data)=> {
+        console.log(data);
         const newMessage = new Message({
             timestamp: Date(),
-            message: msg,
+            message: data.message,
             author: socket.request.user._id
         });
+        const server = await Server.findById(data.serverID);
+        server.messages.push(newMessage._id);
         await newMessage.save();
+        await server.save();
     })
 });
 

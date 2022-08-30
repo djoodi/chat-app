@@ -2,6 +2,7 @@ const User = require('../schemas/user');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const { isLoggedIn } = require('../middleware');
 
 // routes
 router.post('/login', (req, res, next)=> {
@@ -35,16 +36,13 @@ router.post('/register', (req, res)=> {
     console.log(req.body);
 });
 
-router.get('/user', (req, res)=> {
-    const isAuthenticated = !!req.user;
-    if (isAuthenticated) {
-        console.log(`user is authenticated, session is ${req.session.id}`);
-    }
+router.get('/user', isLoggedIn, (req, res)=> {
+    console.log(`user is authenticated, session is ${req.session.id}`);
     res.send(req.user);
 });
 
-router.get('/logout', (req, res) => {
-    if (req.user) req.logOut((err)=> {
+router.get('/logout', isLoggedIn, (req, res) => {
+    req.logOut((err)=> {
         if (err) throw err;
         console.log('Logged out successfully');
         res.send('Logged out successfully');

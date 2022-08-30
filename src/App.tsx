@@ -16,7 +16,11 @@ function App() {
   const [loginUsername, setLoginUsername] = useState<string>("");
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [registerPassword, setRegisterPassword] = useState<string>("");
-  const [data, setData] = useState<any>(null)
+  const [serverTitle, setServerTitle] = useState<string>('');
+  const [userData, setUserData] = useState<any>(null);
+  const [servers, setServers] = useState<any>(null);
+  const [server, setServer] = useState<any>(null);
+  const [channel, setChannel] = useState<any>(null);
   const [socketID, setSocketID] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [message, setMessage] = useState<string>("")
@@ -43,7 +47,8 @@ function App() {
       withCredentials: true,
       url: 'http://localhost:4000/login'
     }).then((res)=>{
-      console.log(`Logged in`);
+      getUser();
+      console.log(res);
     });
   };
 
@@ -52,7 +57,7 @@ function App() {
       method: 'GET',
       withCredentials: true,
       url: 'http://localhost:4000/user'
-    }).then((res) => setData(res.data));
+    }).then((res) => setUserData(res.data));
   };
 
   const logout = () => {
@@ -63,12 +68,39 @@ function App() {
     }).then((res) => console.log(res));
   };
 
+  const createServer = () => {
+    Axios({
+      method: 'POST',
+      data: {
+        title: serverTitle,
+        id: userData._id
+      },
+      withCredentials: true,
+      url: 'http://localhost:4000/servers/create'
+    }).then((res) => {
+      console.log(res);
+      setServerTitle('');
+    });
+  }
+
+  const getServers = () => {
+    Axios({
+      method: 'GET',
+      withCredentials: true,
+      url: 'http://localhost:4000/servers/index'
+    }).then((res) => {
+      console.log(res);
+      setServers(res.data);
+    })
+  }
+
   const connectToSocket = () => {
     socket.connect();
   }
 
   const sendMessage = () => {
-    socket.emit("message", message);
+    socket.emit("message", {message, serverID: server._id});
+    setMessage('');
   }
 
   const getSocketInfo = () => {
@@ -116,10 +148,13 @@ function App() {
       </div>
 
       <div>
-        <h3>Get User</h3>
-        <button onClick={getUser}>Submit</button>
         {
-          data? <h3>Welcome Back {data.username}</h3> : null
+          userData? 
+            <div>
+              <h3>Welcome Back {userData.username}</h3>
+              <p>User ID: {userData._id}</p>
+            </div>
+            : null
         }
       </div>
 
@@ -137,11 +172,33 @@ function App() {
       <p>Socket ID: {socketID}</p>
       <p>Username: {username}</p>
 
+
       <div>
-        <h3>Create message</h3>
-        <input type="text" placeholder="send a message" onChange={e=> setMessage(e.target.value)}/>
-        <button onClick={sendMessage}>Send</button>
+        <h3>Create a server</h3>
+        <input type="text" placeholder='server name' onChange={e => setServerTitle(e.target.value)} value={serverTitle}/>
+        <button onClick={createServer}>Create</button>
       </div>
+
+      <div>
+        <h3>Your Servers</h3>
+        <button onClick={getServers}>Get servers</button>
+        <p></p>
+        {servers? 
+          servers.map((server:any) => {
+            return(<div key={server._id}><button value={server._id} onClick={()=>setServer(server)}>{server.title}</button></div>)
+          })
+            : null
+        }
+      </div>
+      
+      {server?
+        <div>
+          <h3>Send a message to <b>{server.title}</b></h3>
+          <input type="text" placeholder="send a message" onChange={e=> setMessage(e.target.value)} value={message}/>
+          <button onClick={sendMessage}>Send</button>
+        </div>
+        :null
+      }
 
     </div>
   );
