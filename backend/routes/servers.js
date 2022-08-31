@@ -4,10 +4,6 @@ const express = require('express');
 const router = express.Router();
 const {isLoggedIn, isAuthor} = require('../middleware');
 
-router.get('/app', isLoggedIn, (req, res) => {
-    
-});
-
 router.get('/index', isLoggedIn, async(req, res)=> {
     const {_id} = req.user;
     const user = await User.findById(_id).populate('servers');
