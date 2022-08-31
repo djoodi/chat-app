@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from "react-dom/client";
 import './App.css';
 import Axios from 'axios';
-import {io} from 'socket.io-client';
+import { io } from 'socket.io-client';
+import Login from './components/Login';
+import Register from './components/Register';
+import { AuthInfo } from './models';
+import { Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
@@ -12,10 +17,9 @@ function App() {
 
   const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
 
-  const [registerUsername, setRegisterUsername] = useState<string>("");
-  const [loginUsername, setLoginUsername] = useState<string>("");
-  const [loginPassword, setLoginPassword] = useState<string>("");
-  const [registerPassword, setRegisterPassword] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>('login');
+  const [authInput, setAuthInput] = useState<AuthInfo>({ username: "", password: "" });
+
   const [serverTitle, setServerTitle] = useState<string>('');
   const [userData, setUserData] = useState<any>(null);
   const [servers, setServers] = useState<any>(null);
@@ -23,34 +27,47 @@ function App() {
   const [channel, setChannel] = useState<any>(null);
   const [socketID, setSocketID] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const [message, setMessage] = useState<string>("")
+  const [message, setMessage] = useState<string>('');
 
-  const register = () => {
+  const register = (e: React.FormEvent) => {
+    e.preventDefault();
     Axios({
-      method: 'POST',
+      method: "POST",
       data: {
-        username: registerUsername,
-        password: registerPassword
+        username: authInput.username,
+        password: authInput.password
       },
       withCredentials: true,
-      url: 'http://localhost:4000/register'
-    }).then((res) => console.log(res));
+      url: "http://localhost:4000/register",
+    }).then((res) => {
+      setAuthInput({ username: "", password: "" });
+      console.log(res);
+      if (res.data === true) {
+        window.location.href='/app'
+      }
+    });
   };
 
-  const login = () => {
+  const login = (e: React.FormEvent) => {
+    e.preventDefault();
     Axios({
       method: 'POST',
       data: {
-        username: loginUsername,
-        password: loginPassword
+        username: authInput.username,
+        password: authInput.password
       },
       withCredentials: true,
       url: 'http://localhost:4000/login'
-    }).then((res)=>{
-      getUser();
+    }).then((res) => {
+      //getUser();
+      setAuthInput({ username: "", password: "" });
       console.log(res);
+      if (res.data === true) {
+        window.location.href='/app'
+      }
     });
   };
+
 
   const getUser = () => {
     Axios({
@@ -99,21 +116,21 @@ function App() {
   }
 
   const sendMessage = () => {
-    socket.emit("message", {message, serverID: server._id});
+    socket.emit("message", { message, serverID: server._id });
     setMessage('');
   }
 
   const getSocketInfo = () => {
-    socket.emit('whoami', (username: string)=> {
+    socket.emit('whoami', (username: string) => {
       setUsername(username);
     })
   }
 
   useEffect(() => {
 
-    socket.on('connect', ()=> {
+    socket.on('connect', () => {
       setSocketID(socket.id);
-      
+
       getSocketInfo();
 
       setIsConnected(true);
@@ -122,84 +139,41 @@ function App() {
     socket.on('disconnect', () => {
       setIsConnected(false);
     });
-  
+
     return () => {
       socket.off('connect');
       socket.off('disconnect');
     }
   }, [])
-  
+
 
   return (
     <div className="App">
-      
-      <div>
-        <h3>Register</h3>
-        <input type="text" placeholder="username" onChange={e => setRegisterUsername(e.target.value)}/>
-        <input type="password" placeholder="password" onChange={e => setRegisterPassword(e.target.value)}/>
-        <button onClick={register}>Submit</button>
-      </div>
-
-      <div>
-        <h3>Login</h3>
-        <input type="text" placeholder="username" onChange={e => setLoginUsername(e.target.value)}/>
-        <input type="password" placeholder="password" onChange={e => setLoginPassword(e.target.value)}/>
-        <button onClick={login}>Submit</button>
-      </div>
-
-      <div>
-        {
-          userData? 
-            <div>
-              <h3>Welcome Back {userData.username}</h3>
-              <p>User ID: {userData._id}</p>
-            </div>
-            : null
-        }
-      </div>
-
-      <div>
-        <h3>Logout</h3>
-        <button onClick={logout}>Submit</button>
-      </div>
-
-      <p>{}</p>
-
-      <h1>Socket stuff</h1>
-
-      <button onClick={connectToSocket}>Connect</button>
-
-      <p>Socket ID: {socketID}</p>
-      <p>Username: {username}</p>
-
-
-      <div>
-        <h3>Create a server</h3>
-        <input type="text" placeholder='server name' onChange={e => setServerTitle(e.target.value)} value={serverTitle}/>
-        <button onClick={createServer}>Create</button>
-      </div>
-
-      <div>
-        <h3>Your Servers</h3>
-        <button onClick={getServers}>Get servers</button>
-        <p></p>
-        {servers? 
-          servers.map((server:any) => {
-            return(<div key={server._id}><button value={server._id} onClick={()=>setServer(server)}>{server.title}</button></div>)
-          })
-            : null
-        }
-      </div>
-      
-      {server?
-        <div>
-          <h3>Send a message to <b>{server.title}</b></h3>
-          <input type="text" placeholder="send a message" onChange={e=> setMessage(e.target.value)} value={message}/>
-          <button onClick={sendMessage}>Send</button>
-        </div>
-        :null
-      }
-
+      <Container className='vh-100 d-flex justify-content-center align-items-center'>
+        <Row className="col-xxl-4 col-xl-4 col-lg-6 col-md-8 col-sm-10 col-xs-12">
+          <h1 className='text-center'>Chat-App</h1>
+          <Card className='px-0'>
+            <Card.Header>
+              <Nav variant="tabs" defaultActiveKey="#login">
+                <Nav.Item>
+                  <Nav.Link href="#login" onClick={() => setActiveTab('login')}>Login</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link href="#register" onClick={() => setActiveTab('register')}>Register</Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Card.Header>
+            <Card.Body>
+              <Card.Title>{activeTab === 'login' ? 'Login' : 'Register'}</Card.Title>
+              {
+                activeTab === 'login' ?
+                  <Login authInput={authInput} setAuthInput={setAuthInput} handleSubmit={login} />
+                  : <Register authInput={authInput} setAuthInput={setAuthInput} handleSubmit={register} />
+              }
+            </Card.Body>
+          </Card>
+        </Row>
+      </Container>
     </div>
   );
 }

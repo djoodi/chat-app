@@ -2,8 +2,11 @@ const Server = require('../schemas/server');
 const User = require('../schemas/user');
 const express = require('express');
 const router = express.Router();
-const {isLoggedIn} = require('../middleware');
-const mongoose = require('mongoose');
+const {isLoggedIn, isAuthor} = require('../middleware');
+
+router.get('/app', isLoggedIn, (req, res) => {
+    
+});
 
 router.get('/index', isLoggedIn, async(req, res)=> {
     const {_id} = req.user;
@@ -24,6 +27,6 @@ router.post('/create', isLoggedIn, async (req, res)=>{
     await user.save();
     await server.save();
     res.send(req.user);
-})
+});
 
 module.exports = router;
