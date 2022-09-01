@@ -1,9 +1,10 @@
 import React from 'react'
+import Message from './Message'
 
 const MessageList = () => {
   return (
-    <div className='align-self-end h-100' id='messageList'>
-
+    <div className='flex-grow-1' id='messageList'>
+      {}
     </div>
   )
 }

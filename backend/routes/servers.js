@@ -22,7 +22,7 @@ router.post('/create', isLoggedIn, async (req, res)=>{
     user.servers.push(server._id);
     await user.save();
     await server.save();
-    res.send(req.user);
+    res.send(server);
 });
 
 module.exports = router;

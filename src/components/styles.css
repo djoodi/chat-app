@@ -1,28 +1,73 @@
 #serverList {
     width: 70px;
-    background-color: blue;
+    overflow-y: scroll;
 }
 
 #channelList {
     width: 300px;
-    background-color: red;
+}
+
+#channelContainer {
+    overflow-y: scroll;
 }
 
 #memberList {
     width: 300px;
-    background-color: green;
     justify-self: end;
 }
 
-#messagePanel {
-    width: calc(1vw -(70px + 300px + 300px));
+#memberContainer {
+    overflow-y: scroll;
 }
+
+/* #messagePanel {
+    
+} */
 
 #messageList {
     overflow-y: scroll;
 }
 
 #messageInput {
-    height: 50px;
-    background-color: yellow;
+    height: 45px;
+}
+
+#userInfo {
+    height: 45px;
+}
+
+.message {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.serverIcon {
+    font-size: 24px !important;
+    width: 50px;
+    height: 50px !important;
+}
+
+.serverIcon:hover {
+    cursor:pointer;
+}
+
+.channel:hover {
+    cursor: pointer;
+}
+
+.member:hover {
+    cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(179, 179, 179);
+    border-radius: 50px;
 }

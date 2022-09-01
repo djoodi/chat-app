@@ -20,13 +20,10 @@ function App() {
   const [activeTab, setActiveTab] = useState<string>('login');
   const [authInput, setAuthInput] = useState<AuthInfo>({ username: "", password: "" });
 
-  const [serverTitle, setServerTitle] = useState<string>('');
-  const [userData, setUserData] = useState<any>(null);
-  const [servers, setServers] = useState<any>(null);
   const [server, setServer] = useState<any>(null);
-  const [channel, setChannel] = useState<any>(null);
+  
   const [socketID, setSocketID] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
+
   const [message, setMessage] = useState<string>('');
 
   const register = (e: React.FormEvent) => {
@@ -69,13 +66,7 @@ function App() {
   };
 
 
-  const getUser = () => {
-    Axios({
-      method: 'GET',
-      withCredentials: true,
-      url: 'http://localhost:4000/user'
-    }).then((res) => setUserData(res.data));
-  };
+
 
   const logout = () => {
     Axios({
@@ -85,31 +76,9 @@ function App() {
     }).then((res) => console.log(res));
   };
 
-  const createServer = () => {
-    Axios({
-      method: 'POST',
-      data: {
-        title: serverTitle,
-        id: userData._id
-      },
-      withCredentials: true,
-      url: 'http://localhost:4000/servers/create'
-    }).then((res) => {
-      console.log(res);
-      setServerTitle('');
-    });
-  }
 
-  const getServers = () => {
-    Axios({
-      method: 'GET',
-      withCredentials: true,
-      url: 'http://localhost:4000/servers/index'
-    }).then((res) => {
-      console.log(res);
-      setServers(res.data);
-    })
-  }
+
+
 
   const connectToSocket = () => {
     socket.connect();
@@ -120,18 +89,18 @@ function App() {
     setMessage('');
   }
 
-  const getSocketInfo = () => {
-    socket.emit('whoami', (username: string) => {
-      setUsername(username);
-    })
-  }
+  // const getSocketInfo = () => {
+  //   socket.emit('whoami', (username: string) => {
+  //     setUsername(username);
+  //   })
+  // }
 
   useEffect(() => {
 
     socket.on('connect', () => {
       setSocketID(socket.id);
 
-      getSocketInfo();
+      // getSocketInfo();
 
       setIsConnected(true);
     });
