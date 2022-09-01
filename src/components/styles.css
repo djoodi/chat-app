@@ -1,0 +1,28 @@
+#serverList {
+    width: 70px;
+    background-color: blue;
+}
+
+#channelList {
+    width: 300px;
+    background-color: red;
+}
+
+#memberList {
+    width: 300px;
+    background-color: green;
+    justify-self: end;
+}
+
+#messagePanel {
+    width: calc(1vw -(70px + 300px + 300px));
+}
+
+#messageList {
+    overflow-y: scroll;
+}
+
+#messageInput {
+    height: 50px;
+    background-color: yellow;
+}

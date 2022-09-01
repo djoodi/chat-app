@@ -6,7 +6,7 @@ const {isLoggedIn} = require('../middleware');
 
 // routes
 router.get('/app', isLoggedIn, (req, res) => {
-    console.log('get request');
+    
 });
 
 router.post('/login', (req, res, next) => {

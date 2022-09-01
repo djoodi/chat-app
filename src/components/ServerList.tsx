@@ -1,8 +1,11 @@
 import React from 'react'
+import './styles.css';
 
 const ServerList = () => {
   return (
-    <div>ServerList</div>
+    <div className='h-100' id='serverList'>
+
+    </div>
   )
 }
 

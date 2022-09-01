@@ -1,8 +1,9 @@
 import React from 'react'
+import './styles.css';
 
 const ChannelList = () => {
   return (
-    <div>ChannelList</div>
+    <div className='' id='channelList'>ChannelList</div>
   )
 }
 
