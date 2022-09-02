@@ -36,6 +36,22 @@
     height: 45px;
 }
 
+#dropdown-server {
+    border: 0;
+}
+
+#serverInfo {
+    height: 38px;
+}
+
+.react-icons {
+    vertical-align: middle;
+}
+
+.dropdown-toggle::after {
+    display: none !important; 
+}
+
 .message {
     border-bottom: 1px solid #dee2e6;
 }

@@ -14,8 +14,8 @@ module.exports.isLoggedIn = (req, res, next) => {
 }
 
 module.exports.isAuthor = async (req, res, next) => {
-    const {id} = req.params;
-    const server = await server.findById(id);
+    const {id} = req.body;
+    const server = await Server.findById(id);
     if(!server.author.equals(req.user._id)) {
         return res.send('You do not have permission to do that.');
     }

@@ -31,7 +31,7 @@ const Register : React.FC<Props> = ({authInput, setAuthInput, handleSubmit}) => 
                     onChange={e => setAuthInput({ username: authInput.username, password: e.target.value })}
                 />
             </Form.Group>
-            <Button onClick={handleSubmit}>Register</Button>
+            <Button onClick={handleSubmit} type='submit'>Register</Button>
 
         </Form>
     );

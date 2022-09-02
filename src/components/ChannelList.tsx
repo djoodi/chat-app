@@ -1,12 +1,21 @@
 import React from 'react'
 import Channel from './Channel';
+import ServerInfo from './ServerInfo';
 import './styles.css';
 import UserInfo from './UserInfo';
 
-const ChannelList = () => {
+interface Props {
+  selectedServerTitle:string;
+  deleteServer: ()=>void;
+  serverTitle: string;
+  setServerTitle: React.Dispatch<React.SetStateAction<string>>;
+  renameServer: ()=>void;
+}
+
+const ChannelList: React.FC<Props> = ({selectedServerTitle, deleteServer, serverTitle, setServerTitle, renameServer}) => {
   return (
     <div className='border-end border-3 d-flex flex-column' id='channelList'>
-      <h6 className='text-muted border-bottom border-3 p-2 m-0'>Server Title</h6>
+      <ServerInfo selectedServerTitle={selectedServerTitle} deleteServer={deleteServer} serverTitle={serverTitle} setServerTitle={setServerTitle} renameServer={renameServer}/>
       <div className='d-flex flex-column flex-grow-1' id='channelContainer'>
         {}
       </div>

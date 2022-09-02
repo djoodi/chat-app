@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Channel = require('./channel');
 
 const ServerSchema = new Schema({
     author: {
@@ -18,7 +19,7 @@ const ServerSchema = new Schema({
     }],
     channels: [{
         type: Schema.Types.ObjectId,
-        ref: 'Channel'
+        ref: 'Channel',
     }],
 });
 

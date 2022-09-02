@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const ChannelSchema = new Schema({
     title: {
         type: String,
-        required: true
+        required: true,
     },
     messages: [{
         type: Schema.Types.ObjectId,
