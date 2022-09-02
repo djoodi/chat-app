@@ -21,7 +21,7 @@ function App() {
   const [authInput, setAuthInput] = useState<AuthInfo>({ username: "", password: "" });
 
   const [server, setServer] = useState<any>(null);
-  
+
   const [socketID, setSocketID] = useState<string>('');
 
   const [message, setMessage] = useState<string>('');
@@ -40,7 +40,7 @@ function App() {
       setAuthInput({ username: "", password: "" });
       console.log(res);
       if (res.data === true) {
-        window.location.href='/app'
+        window.location.href = '/app'
       }
     });
   };
@@ -60,13 +60,10 @@ function App() {
       setAuthInput({ username: "", password: "" });
       console.log(res);
       if (res.data === true) {
-        window.location.href='/app'
+        window.location.href = '/app'
       }
     });
   };
-
-
-
 
   const logout = () => {
     Axios({
@@ -75,10 +72,6 @@ function App() {
       url: 'http://localhost:4000/logout'
     }).then((res) => console.log(res));
   };
-
-
-
-
 
   const connectToSocket = () => {
     socket.connect();
@@ -143,6 +136,7 @@ function App() {
           </Card>
         </Row>
       </Container>
+
     </div>
   );
 }

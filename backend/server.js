@@ -4,7 +4,7 @@ const cors = require('cors');
 const passport = require('passport');
 const passportLocalStrategy = require('passport-local').Strategy;
 const cookieParsrer = require('cookie-parser');
-const bcrypt = require('bcryptjs');
+const flash = require('connect-flash');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const http = require('http');
@@ -42,6 +42,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 app.use(cookieParsrer("secretcode"));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new passportLocalStrategy(User.authenticate()));
