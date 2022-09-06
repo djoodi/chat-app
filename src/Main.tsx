@@ -186,7 +186,7 @@ const Main = () => {
           setChannelTitle={setChannelTitle}
           createChannel={createChannel}
           />
-        <MessagePanel />
+        <MessagePanel selectedChannel={selectedChannel}/>
         <MemberList />
       </div>
     </div>
