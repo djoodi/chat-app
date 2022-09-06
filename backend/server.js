@@ -12,6 +12,7 @@ const User = require('./schemas/user');
 const Message = require('./schemas/message');
 const userRoutes = require('./routes/users');
 const serverRoutes = require('./routes/servers');
+const channelRoutes = require('./routes/channels');
 const Server = require('./schemas/server');
 
 const app = express();
@@ -54,6 +55,7 @@ passport.deserializeUser(User.deserializeUser());
 // routes
 app.use('/', userRoutes);
 app.use('/servers', serverRoutes);
+app.use('/channels', channelRoutes);
 
 
 // socket.io events

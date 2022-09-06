@@ -40,6 +40,10 @@
     border: 0;
 }
 
+#dropdown-user {
+    border: 0;
+}
+
 #serverInfo {
     height: 38px;
 }

@@ -6,7 +6,7 @@ import { io } from 'socket.io-client';
 import Login from './components/Login';
 import Register from './components/Register';
 import { AuthInfo } from './models';
-import { Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
@@ -16,18 +16,35 @@ const socket = io('http://localhost:4000', {
 function App() {
 
   const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
-
+  const [server, setServer] = useState<any>(null);
+  const [socketID, setSocketID] = useState<string>('');
+  
+  
   const [activeTab, setActiveTab] = useState<string>('login');
   const [authInput, setAuthInput] = useState<AuthInfo>({ username: "", password: "" });
-
-  const [server, setServer] = useState<any>(null);
-
-  const [socketID, setSocketID] = useState<string>('');
-
+  
+  const [error, setError] = useState<string>('');
+  const [validated, setValidated] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
+
+  const flashError = (message: string) => {
+    setError(message);
+
+    setTimeout(() => { setError('') }, 3000);
+  }
 
   const register = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const form = e.currentTarget as HTMLFormElement;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+    }
+
+    setValidated(true);
+
+    if (!authInput.username || !authInput.password) return;
+
     Axios({
       method: "POST",
       data: {
@@ -37,16 +54,28 @@ function App() {
       withCredentials: true,
       url: "http://localhost:4000/register",
     }).then((res) => {
+      setValidated(false);
       setAuthInput({ username: "", password: "" });
       console.log(res);
       if (res.data === true) {
         window.location.href = '/app'
+      } else { // error
+        flashError(res.data);
       }
     });
   };
 
   const login = (e: React.FormEvent) => {
     e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+    }
+
+    setValidated(true);
+
+    if (!authInput.username || !authInput.password) return;
+
     Axios({
       method: 'POST',
       data: {
@@ -56,21 +85,16 @@ function App() {
       withCredentials: true,
       url: 'http://localhost:4000/login'
     }).then((res) => {
+      setValidated(false);
       //getUser();
       setAuthInput({ username: "", password: "" });
       console.log(res);
       if (res.data === true) {
         window.location.href = '/app'
+      } else { // error
+        flashError(res.data);
       }
     });
-  };
-
-  const logout = () => {
-    Axios({
-      method: 'GET',
-      withCredentials: true,
-      url: 'http://localhost:4000/logout'
-    }).then((res) => console.log(res));
   };
 
   const connectToSocket = () => {
@@ -110,18 +134,18 @@ function App() {
 
 
   return (
-    <div className="App">
-      <Container className='vh-100 d-flex justify-content-center align-items-center'>
+    <main className="App">
+      <Container className='vh-100 d-flex flex-column justify-content-center align-items-center'>
         <Row className="col-xxl-4 col-xl-4 col-lg-6 col-md-8 col-sm-10 col-xs-12">
           <h1 className='text-center'>Chat-App</h1>
           <Card className='px-0'>
             <Card.Header>
               <Nav variant="tabs" defaultActiveKey="#login">
                 <Nav.Item>
-                  <Nav.Link href="#login" onClick={() => setActiveTab('login')}>Login</Nav.Link>
+                  <Nav.Link href="#login" onClick={() => {setActiveTab('login'); setAuthInput({username: '', password: ''}); setValidated(false)}}>Login</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link href="#register" onClick={() => setActiveTab('register')}>Register</Nav.Link>
+                  <Nav.Link href="#register" onClick={() =>{setActiveTab('register'); setAuthInput({username: '', password: ''}); setValidated(false)}}>Register</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Card.Header>
@@ -129,15 +153,23 @@ function App() {
               <Card.Title>{activeTab === 'login' ? 'Login' : 'Register'}</Card.Title>
               {
                 activeTab === 'login' ?
-                  <Login authInput={authInput} setAuthInput={setAuthInput} handleSubmit={login} />
-                  : <Register authInput={authInput} setAuthInput={setAuthInput} handleSubmit={register} />
+                  <Login authInput={authInput} setAuthInput={setAuthInput} handleSubmit={login} validated={validated}/>
+                  : <Register authInput={authInput} setAuthInput={setAuthInput} handleSubmit={register} validated={validated}/>
               }
             </Card.Body>
           </Card>
         </Row>
+        { error? 
+          <Alert variant='danger' className='mt-3'>
+            <p className='m-0'>{error}</p>
+          </Alert>
+
+          :
+          <Row style={{height: '90px'}}></Row>
+        }
       </Container>
 
-    </div>
+    </main>
   );
 }
 

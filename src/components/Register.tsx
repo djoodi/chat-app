@@ -7,31 +7,42 @@ interface Props {
     authInput: AuthInfo;
     setAuthInput: React.Dispatch<React.SetStateAction<AuthInfo>>;
     handleSubmit: (e: React.FormEvent) => void;
+    validated: boolean;
 }
 
-const Register : React.FC<Props> = ({authInput, setAuthInput, handleSubmit}) => {
+const Register : React.FC<Props> = ({authInput, setAuthInput, handleSubmit, validated}) => {
 
     return (
-        <Form>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-                <Form.Label>Username</Form.Label>
+                <Form.Label htmlFor='registerUsername'>Username</Form.Label>
                 <Form.Control
+                    id='useregisterUsernamername'
+                    required
                     type="text"
                     placeholder="Enter username"
                     value={authInput.username}
                     onChange={e => setAuthInput({ username: e.target.value, password: authInput.password })}
                 />
+                <Form.Control.Feedback type="invalid">
+                    Please enter a username.
+                </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
+                <Form.Label htmlFor='registerPassword'>Password</Form.Label>
                 <Form.Control
+                    id='registerPassword'
+                    required
                     type="password"
                     placeholder="Enter password"
                     value={authInput.password}
                     onChange={e => setAuthInput({ username: authInput.username, password: e.target.value })}
                 />
+                <Form.Control.Feedback type="invalid">
+                    Please enter a password.
+                </Form.Control.Feedback>
             </Form.Group>
-            <Button onClick={handleSubmit} type='submit'>Register</Button>
+            <Button type='submit'>Register</Button>
 
         </Form>
     );

@@ -35,7 +35,7 @@ const ServerAddButton: React.FC<Props> = ({serverTitle, setServerTitle, createSe
                         Close
                     </Button>
                     <Button variant="primary" onClick={(e)=>{createServer(e); handleClose()}}>
-                        Save Changes
+                        Save
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -4,6 +4,11 @@ export interface AuthInfo {
 }
 
 export interface ServerInfo {
-    id: string,
-    title: string
+    id: string;
+    title: string;
+}
+
+export interface ChannelInfo {
+    id: string;
+    title: string;
 }

@@ -5,6 +5,13 @@ const passport = require('passport');
 const {isLoggedIn} = require('../middleware');
 
 // routes
+router.get('/user', isLoggedIn, (req, res) => {
+    console.log(`user is authenticated, session is ${
+        req.session.id
+    }`);
+    res.send(req.user);
+});
+
 router.get('/app', isLoggedIn, (req, res) => {
     
 });
@@ -45,12 +52,6 @@ router.post('/register', (req, res) => {
     console.log(req.body);
 });
 
-router.get('/user', isLoggedIn, (req, res) => {
-    console.log(`user is authenticated, session is ${
-        req.session.id
-    }`);
-    res.send(req.user);
-});
 
 router.get('/logout', isLoggedIn, (req, res) => {
     req.logOut((err) => {
