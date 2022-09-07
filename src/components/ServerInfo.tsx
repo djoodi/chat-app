@@ -2,21 +2,43 @@ import React, { useState } from 'react'
 import { Button, Dropdown, Form, Modal } from 'react-bootstrap'
 import { IconContext } from 'react-icons'
 import { BsGear } from 'react-icons/bs'
+import { ChannelInfo } from '../models';
+import ServerModalEdit from './ServerModalEdit';
+import ServerModalRename from './ServerModalRename';
 
 interface Props {
     selectedServerTitle: string;
     deleteServer: () => void;
     serverTitle: string;
     setServerTitle: React.Dispatch<React.SetStateAction<string>>;
-    renameServer: ()=>void;
+    renameServer: () => void;
+    editChannel: () => void;
+    channelTitle: string;
+    setChannelTitle: React.Dispatch<React.SetStateAction<string>>;
+    channels: ChannelInfo[];
+    setChannels: React.Dispatch<React.SetStateAction<ChannelInfo[]>>
 }
 
-const ServerInfo: React.FC<Props> = ({ selectedServerTitle, deleteServer, serverTitle, setServerTitle, renameServer}) => {
+const ServerInfo: React.FC<Props> = ({
+    selectedServerTitle,
+    deleteServer,
+    serverTitle,
+    setServerTitle,
+    renameServer,
+    editChannel,
+    channelTitle,
+    setChannelTitle,
+    channels,
+    setChannels
+}) => {
 
-    const [show, setShow] = useState(false);
+    const [showEditServerModal, setShowEditServerModal] = useState(false);
+    const [showRenameModal, setShowRenameModal] = useState(false);
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const closeRename = () => setShowRenameModal(false);
+    const showRename = () => setShowRenameModal(true);
+    const closeEdit = () => setShowEditServerModal(false);
+    const showEdit = () => setShowEditServerModal(true);
 
     return (
         <>
@@ -32,7 +54,8 @@ const ServerInfo: React.FC<Props> = ({ selectedServerTitle, deleteServer, server
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                                <Dropdown.Item onClick={()=> {setServerTitle(selectedServerTitle); handleShow()}}>Rename Server</Dropdown.Item>
+                                <Dropdown.Item onClick={() => { setServerTitle(selectedServerTitle); showRename() }}>Rename Server</Dropdown.Item>
+                                <Dropdown.Item onClick={() => { showEdit() }}>Edit Channels</Dropdown.Item>
                                 <Dropdown.Item className='text-danger' onClick={() => deleteServer()}>Delete Server</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
@@ -41,25 +64,23 @@ const ServerInfo: React.FC<Props> = ({ selectedServerTitle, deleteServer, server
                 }
             </div >
 
+            <ServerModalRename
+                showRenameModal={showRenameModal}
+                closeRename={closeRename}
+                serverTitle={serverTitle}
+                setServerTitle={setServerTitle}
+                renameServer={renameServer}
+            />
 
-            <Modal centered show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Rename server</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Control type='text' placeholder='new server title' autoFocus value={serverTitle} onChange={e => setServerTitle(e.target.value)} />
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={() => { renameServer(); handleClose() }}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <ServerModalEdit
+                showEditModal={showEditServerModal}
+                closeEdit={closeEdit}
+                channelTitle={channelTitle}
+                setChannelTitle={setChannelTitle}
+                editChannel={editChannel}
+                channels={channels}
+                setChannels={setChannels}
+            />
 
         </>
     )

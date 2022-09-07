@@ -18,19 +18,23 @@ function App() {
   const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
   const [server, setServer] = useState<any>(null);
   const [socketID, setSocketID] = useState<string>('');
-  
-  
+
+
   const [activeTab, setActiveTab] = useState<string>('login');
   const [authInput, setAuthInput] = useState<AuthInfo>({ username: "", password: "" });
-  
+
   const [error, setError] = useState<string>('');
   const [validated, setValidated] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
+  const [show, setShow] = useState<boolean>(false);
 
   const flashError = (message: string) => {
     setError(message);
+    setShow(true);
 
-    setTimeout(() => { setError('') }, 3000);
+    setTimeout(() => { 
+      setShow(false);
+    }, 3000);
   }
 
   const register = (e: React.FormEvent) => {
@@ -142,10 +146,10 @@ function App() {
             <Card.Header>
               <Nav variant="tabs" defaultActiveKey="#login">
                 <Nav.Item>
-                  <Nav.Link href="#login" onClick={() => {setActiveTab('login'); setAuthInput({username: '', password: ''}); setValidated(false)}}>Login</Nav.Link>
+                  <Nav.Link href="#login" onClick={() => { setActiveTab('login'); setAuthInput({ username: '', password: '' }); setValidated(false) }}>Login</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link href="#register" onClick={() =>{setActiveTab('register'); setAuthInput({username: '', password: ''}); setValidated(false)}}>Register</Nav.Link>
+                  <Nav.Link href="#register" onClick={() => { setActiveTab('register'); setAuthInput({ username: '', password: '' }); setValidated(false) }}>Register</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Card.Header>
@@ -153,20 +157,17 @@ function App() {
               <Card.Title>{activeTab === 'login' ? 'Login' : 'Register'}</Card.Title>
               {
                 activeTab === 'login' ?
-                  <Login authInput={authInput} setAuthInput={setAuthInput} handleSubmit={login} validated={validated}/>
-                  : <Register authInput={authInput} setAuthInput={setAuthInput} handleSubmit={register} validated={validated}/>
+                  <Login authInput={authInput} setAuthInput={setAuthInput} handleSubmit={login} validated={validated} />
+                  : <Register authInput={authInput} setAuthInput={setAuthInput} handleSubmit={register} validated={validated} />
               }
             </Card.Body>
           </Card>
         </Row>
-        { error? 
-          <Alert variant='danger' className='mt-3'>
+        <Row style={{ height: '90px' }}>
+          <Alert variant='danger' className='mt-3' show={show} onClose={()=>setShow(false)}>
             <p className='m-0'>{error}</p>
           </Alert>
-
-          :
-          <Row style={{height: '90px'}}></Row>
-        }
+        </Row>
       </Container>
 
     </main>

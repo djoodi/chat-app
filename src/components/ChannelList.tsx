@@ -15,9 +15,12 @@ interface Props {
   logout: () => void;
   username: string;
   channels: ChannelInfo[];
+  setChannels: React.Dispatch<React.SetStateAction<ChannelInfo[]>>;
   channelTitle: string;
   setChannelTitle: React.Dispatch<React.SetStateAction<string>>;
   createChannel: () => void;
+  setSelectedChannel: React.Dispatch<React.SetStateAction<any>>;
+  editChannel: ()=> void;
 }
 
 const ChannelList: React.FC<Props> = (
@@ -29,17 +32,33 @@ const ChannelList: React.FC<Props> = (
     logout,
     username,
     channels,
+    setChannels,
     channelTitle,
     setChannelTitle,
-    createChannel }) => {
+    createChannel,
+    setSelectedChannel,
+    editChannel
+  }) => {
 
   return (
     <div className='border-end border-3 d-flex flex-column' id='channelList'>
-      <ServerInfo selectedServerTitle={selectedServerTitle} deleteServer={deleteServer} serverTitle={serverTitle} setServerTitle={setServerTitle} renameServer={renameServer} />
+      <ServerInfo 
+        selectedServerTitle={selectedServerTitle} 
+        deleteServer={deleteServer} 
+        serverTitle={serverTitle} 
+        setServerTitle={setServerTitle} 
+        renameServer={renameServer}
+        channelTitle={channelTitle}
+        setChannelTitle={setChannelTitle}
+        editChannel={editChannel}
+        channels={channels}
+        setChannels={setChannels}
+      />
+
       <div className='d-flex flex-column flex-grow-1' id='channelContainer'>
         {channels ?
           channels.map((channel) => {
-            return (<Channel key={channel.id} title={channel.title} />);
+            return (<Channel key={channel.id} title={channel.title} channelID={channel.id} setSelectedChannel={setSelectedChannel}/>);
           })
           : null
         }
@@ -48,12 +67,14 @@ const ChannelList: React.FC<Props> = (
             channelTitle={channelTitle}
             setChannelTitle={setChannelTitle}
             createChannel={createChannel}
-            />
+          />
         
           : null
         }
       </div>
+
       <UserInfo logout={logout} username={username} />
+
     </div>
   )
 }

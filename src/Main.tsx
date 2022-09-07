@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Axios from 'axios';
 import ServerList from './components/ServerList';
 import ChannelList from './components/ChannelList';
@@ -15,7 +15,7 @@ const Main = () => {
   const [serverTitle, setServerTitle] = useState<string>('');
   const [selectedServer, setSelectedServer] = useState<ServerInfo>({id: '', title: ''});
   const [channels, setChannels] = useState<ChannelInfo[]>([]);
-  const [selectedChannel, setSelectedChannel] = useState<any>(null);
+  const [selectedChannel, setSelectedChannel] = useState<ChannelInfo>({id: '', title: ''});
   const [channelTitle, setChannelTitle] = useState<string>('');
 
   const isLoggedIn = () => {
@@ -71,7 +71,7 @@ const Main = () => {
       setServers([...servers, res.data.server]);
       setSelectedServer({id: res.data._id, title: res.data.title});
       setChannels([{id: res.data.channel._id, title: res.data.channel.title}]);
-      setSelectedChannel(res.data.channel);
+      setSelectedChannel({id: res.data.channel._id, title: res.data.channel.title});
     });
   };
 
@@ -112,6 +112,7 @@ const Main = () => {
   };
 
   const getChannels = (serverID: string) => {
+    console.log('getting channels');
     Axios({
       method: 'GET',
       withCredentials: true,
@@ -138,8 +139,12 @@ const Main = () => {
     }).then(res=>{
       console.log(res);
       setChannels([...channels, {id: res.data._id, title: res.data.title}]);
-      setSelectedChannel(res.data);
+      setSelectedChannel({id: res.data._id, title: res.data.title});
     })
+  }
+
+  const editChannel = () => {
+
   }
 
   const logout = () => {
@@ -153,15 +158,24 @@ const Main = () => {
     });
   };
 
+  const didMount = useRef(false);
+
   useEffect(() => {
     isLoggedIn();
     getUser();
     getServers();
 
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
+    }
+
+    getChannels(selectedServer.id);
+
     return () => {
 
     }
-  }, [])
+  }, [selectedServer])
 
   return (
     <div>
@@ -182,9 +196,12 @@ const Main = () => {
           logout={logout} 
           username={userData?.username}
           channels={channels}
+          setChannels={setChannels}
           channelTitle={channelTitle}
           setChannelTitle={setChannelTitle}
           createChannel={createChannel}
+          setSelectedChannel={setSelectedChannel}
+          editChannel={editChannel}
           />
         <MessagePanel selectedChannel={selectedChannel}/>
         <MemberList />
