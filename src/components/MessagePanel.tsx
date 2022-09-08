@@ -9,9 +9,13 @@ const MessagePanel: React.FC = () => {
 
   const channelTitle = useAppSelector((state)=>state.channels.selectedChannel.title);
 
+  const displayTitle = () => {
+    return channelTitle ? channelTitle.replace(" ", "-") : "";
+  }
+
   return (
     <div id='messagePanel' className='flex-grow-1 flex-column d-flex'>
-      <h6 className='text-muted border-bottom border-3 p-2 mb-0'>{channelTitle}</h6>
+      <h6 className='text-muted border-bottom border-3 p-2 mb-0'>{displayTitle()}</h6>
       <MessageList />
       <MessageInput />
     </div>

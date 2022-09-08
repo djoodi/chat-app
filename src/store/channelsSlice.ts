@@ -32,7 +32,7 @@ export const channelsSlice = createSlice({
             state.selectedChannel.title = action.payload.title;
         },
         setSelectedChannel: (state, action) => {
-            state.selectedChannel = state.channels.find((channel) => channel.id === action.payload) || {} as IChannel
+            state.selectedChannel = state.channels.find((channel) => channel.id === action.payload.id) || {} as IChannel
         }
     }
 });

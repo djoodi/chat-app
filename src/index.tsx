@@ -11,7 +11,6 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
@@ -20,6 +19,5 @@ root.render(
         </Routes>
       </BrowserRouter>
     </Provider>
-  </React.StrictMode>
 );
 

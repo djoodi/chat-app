@@ -11,7 +11,6 @@ export const serversSlice = createSlice({
     initialState,
     reducers: {
         setServers: (state, action) => {
-            console.log(action.payload);
             state.servers = action.payload;
         },
         addServer: (state, action) => { // Adding a server will autoselect it

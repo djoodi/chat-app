@@ -12,3 +12,8 @@ export interface IChannel {
     id: string;
     title: string;
 }
+
+export interface IEditChannelAction {
+    type: string;
+    payload: {id: string, title?: string}
+}

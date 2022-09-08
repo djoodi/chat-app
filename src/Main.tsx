@@ -43,14 +43,16 @@ const Main = () => {
   };
 
   const getServers = async () => {
+    console.log('getting servers');
     Axios({
       method: 'GET',
       withCredentials: true,
       url: 'http://localhost:4000/servers/index'
     }).then((res) => {
+      console.log(res);
       if (!servers.selectedServer.title && res.data.length) {
         dispatch(setServers(res.data.map((server:any)=>{return{id: server._id, title: server.title}})));
-        dispatch(setSelectedServer({id: res.data[0]._id, title: res.data[0].title}));
+        dispatch(setSelectedServer({id: res.data[0]._id}));
         getChannels(res.data[0]._id);
       };
     })
@@ -68,10 +70,9 @@ const Main = () => {
     }).then((res) => {
       console.log(res);
 
-      dispatch(addServer(res.data.server));
-      dispatch(setSelectedServer({id: res.data._id, title: res.data.title}));
-      dispatch(setChannels([{id: res.data.channel._id, title: res.data.channel.title}]));
-      dispatch(setSelectedChannel({id: res.data.channel._id, title: res.data.channel.title}));
+      dispatch(addServer({id: res.data._id, title: res.data.title}));
+      dispatch(setChannels(res.data.channels));
+      dispatch(setSelectedChannel({id: res.data.channel._id}));
     });
   };
 
@@ -86,8 +87,6 @@ const Main = () => {
     }).then(res => {
       console.log(res);
       dispatch(removeServer(servers.selectedServer.id)); // remove server client side instead of getting servers again silly
-      if (servers.servers) dispatch(setSelectedServer({id: servers.servers[0].id, title: servers.servers[0].title}));
-      else dispatch(setSelectedServer({id: '', title: ''}));
     });
   }
 
@@ -107,6 +106,10 @@ const Main = () => {
   };
 
   const getChannels = (serverID: string) => {
+    if (!serverID) {
+      console.log("no server id", serverID);
+      return;
+    }
     console.log('getting channels');
     Axios({
       method: 'GET',
@@ -114,10 +117,10 @@ const Main = () => {
       url: `http://localhost:4000/channels/index/${serverID}`
     }).then (res => {
       if (res.data.length) {
-        dispatch(setSelectedChannel(res.data[0]._id));
         dispatch(setChannels(res.data.map((channel:any)=>{
           return {id: channel._id, title: channel.title};
         })))
+        dispatch(setSelectedChannel({id: res.data[0]._id}));
       }
     })
   };
@@ -159,17 +162,17 @@ const Main = () => {
     getUser();
     getServers();
 
-    if (!didMount.current) {
-      didMount.current = true;
-      return;
-    }
+    // if (!didMount.current) {
+    //   didMount.current = true;
+    //   return;
+    // }
 
-    getChannels(servers.selectedServer.id);
+    // getChannels(servers.selectedServer.id);
 
     return () => {
 
     }
-  }, [servers.selectedServer])
+  }, [])
 
   return (
     <div>

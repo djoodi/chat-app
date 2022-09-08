@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/index/:id', isLoggedIn, async(req, res) => {
     const serverID = req.params.id;
-    console.log(serverID);
     const server = await Server.findById(serverID).populate('channels');
     res.send(server.channels);
 });
