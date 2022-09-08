@@ -1,14 +1,18 @@
 import React from 'react'
+import { setSelectedChannel } from '../store/channelsSlice';
+import { useAppDispatch } from '../store/store';
 
 interface Props {
   title: string;
-  setSelectedChannel: React.Dispatch<React.SetStateAction<any>>;
   channelID: string;
 }
 
-const Channel: React.FC<Props> = ({title, setSelectedChannel, channelID}) => {
+const Channel: React.FC<Props> = ({title, channelID}) => {
+
+  const dispatch = useAppDispatch();
+
   return (
-    <div className='channel border-bottom border-1 p-2' onClick={(e) => setSelectedChannel({id: channelID, title})}>
+    <div className='channel border-bottom border-1 p-2' onClick={(e) => {dispatch(setSelectedChannel(channelID))}}>
         <p className='mb-0 text-muted'>{title}</p>
     </div>
   )

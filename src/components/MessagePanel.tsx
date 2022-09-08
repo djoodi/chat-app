@@ -1,16 +1,17 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
+import { useAppSelector } from '../store/store'
 import MessageInput from './MessageInput'
 import MessageList from './MessageList'
 
-interface Props {
-  selectedChannel: any;
-}
 
-const MessagePanel: React.FC<Props> = ({selectedChannel}) => {
+const MessagePanel: React.FC = () => {
+
+  const channelTitle = useAppSelector((state)=>state.channels.selectedChannel.title);
+
   return (
     <div id='messagePanel' className='flex-grow-1 flex-column d-flex'>
-      <h6 className='text-muted border-bottom border-3 p-2 mb-0'>{selectedChannel?.title}</h6>
+      <h6 className='text-muted border-bottom border-3 p-2 mb-0'>{channelTitle}</h6>
       <MessageList />
       <MessageInput />
     </div>

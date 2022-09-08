@@ -1,31 +1,19 @@
 import React, { useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap';
-import { ChannelInfo } from '../models';
+import { IChannel } from '../models';
+import { useAppSelector } from '../store/store';
 import EditChannel from './EditChannel';
 
 interface Props {
-    showEditModal: boolean;
     closeEdit: () => void;
-    editChannel: () => void;
-    channelTitle: string;
-    setChannelTitle: React.Dispatch<React.SetStateAction<string>>;
-    channels: ChannelInfo[];
-    setChannels: React.Dispatch<React.SetStateAction<ChannelInfo[]>>;
+    showEditModal: boolean;
+    editChannelsReq: (channels: IChannel[])=>void;
 }
 
+const ServerModalEdit: React.FC<Props> = ({closeEdit, showEditModal, editChannelsReq}) => {
 
-
-const ServerModalEdit: React.FC<Props> = ({
-    showEditModal,
-    closeEdit,
-    editChannel,
-    channelTitle,
-    setChannelTitle,
-    channels,
-    setChannels
- }) => {
-
-    const [channelsCopy, setChannelsCopy] = useState<ChannelInfo[]>(channels)
+    const channels = useAppSelector((state)=>state.channels.channels);
+    const [channelsCopy, setChannelsCopy] = useState<IChannel[]>([...channels]);
 
     return (
         <Modal centered show={showEditModal} onHide={closeEdit}>
@@ -45,7 +33,7 @@ const ServerModalEdit: React.FC<Props> = ({
                 <Button variant="secondary" onClick={closeEdit}>
                     Cancel
                 </Button>
-                <Button variant="primary" onClick={() => { editChannel(); closeEdit() }}>
+                <Button variant="primary" onClick={() => { editChannelsReq(channelsCopy); closeEdit() }}>
                     Save Changes
                 </Button>
             </Modal.Footer>

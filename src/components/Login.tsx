@@ -1,9 +1,9 @@
 import { Button, Card, Container, Form } from 'react-bootstrap';
-import { AuthInfo } from '../models';
+import { IAuth } from '../models';
 
 interface Props {
-    authInput: AuthInfo;
-    setAuthInput: React.Dispatch<React.SetStateAction<AuthInfo>>;
+    authInput: IAuth;
+    setAuthInput: React.Dispatch<React.SetStateAction<IAuth>>;
     handleSubmit: (e: React.FormEvent) => void;
     validated: boolean
 }

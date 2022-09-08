@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
-import { ChannelInfo } from '../models';
+import { IChannel } from '../models';
 
 interface Props {
     channelID: string;
     title: string;
-    channelsCopy: ChannelInfo[],
-    setChannelsCopy: React.Dispatch<React.SetStateAction<ChannelInfo[]>>;
+    channelsCopy: IChannel[],
+    setChannelsCopy: React.Dispatch<React.SetStateAction<IChannel[]>>;
     
 }
 

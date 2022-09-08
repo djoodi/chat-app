@@ -1,11 +1,11 @@
 import Axios from "axios";
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { AuthInfo } from "../models";
+import { IAuth } from "../models";
 
 interface Props {
-    authInput: AuthInfo;
-    setAuthInput: React.Dispatch<React.SetStateAction<AuthInfo>>;
+    authInput: IAuth;
+    setAuthInput: React.Dispatch<React.SetStateAction<IAuth>>;
     handleSubmit: (e: React.FormEvent) => void;
     validated: boolean;
 }

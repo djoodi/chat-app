@@ -2,35 +2,21 @@ import React, { useState } from 'react'
 import { Button, Dropdown, Form, Modal } from 'react-bootstrap'
 import { IconContext } from 'react-icons'
 import { BsGear } from 'react-icons/bs'
-import { ChannelInfo } from '../models';
+import { IChannel } from '../models';
+import { useAppSelector } from '../store/store';
 import ServerModalEdit from './ServerModalEdit';
 import ServerModalRename from './ServerModalRename';
 
 interface Props {
-    selectedServerTitle: string;
-    deleteServer: () => void;
-    serverTitle: string;
-    setServerTitle: React.Dispatch<React.SetStateAction<string>>;
-    renameServer: () => void;
-    editChannel: () => void;
-    channelTitle: string;
-    setChannelTitle: React.Dispatch<React.SetStateAction<string>>;
-    channels: ChannelInfo[];
-    setChannels: React.Dispatch<React.SetStateAction<ChannelInfo[]>>
+    deleteServerReq: (arg:string)=>void;
+    renameServerReq: (title: string)=>void;
+    editChannelsReq: (channels: IChannel[])=>void;
 }
 
-const ServerInfo: React.FC<Props> = ({
-    selectedServerTitle,
-    deleteServer,
-    serverTitle,
-    setServerTitle,
-    renameServer,
-    editChannel,
-    channelTitle,
-    setChannelTitle,
-    channels,
-    setChannels
-}) => {
+const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChannelsReq }) => {
+
+    const selectedServerTitle = useAppSelector((state)=>state.servers.selectedServer.title);
+    const selectedServerID = useAppSelector((state)=>state.servers.selectedServer.id);
 
     const [showEditServerModal, setShowEditServerModal] = useState(false);
     const [showRenameModal, setShowRenameModal] = useState(false);
@@ -54,9 +40,9 @@ const ServerInfo: React.FC<Props> = ({
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => { setServerTitle(selectedServerTitle); showRename() }}>Rename Server</Dropdown.Item>
+                                <Dropdown.Item onClick={() => { showRename() }}>Rename Server</Dropdown.Item>
                                 <Dropdown.Item onClick={() => { showEdit() }}>Edit Channels</Dropdown.Item>
-                                <Dropdown.Item className='text-danger' onClick={() => deleteServer()}>Delete Server</Dropdown.Item>
+                                <Dropdown.Item className='text-danger' onClick={() => deleteServerReq(selectedServerID)}>Delete Server</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>
@@ -64,23 +50,9 @@ const ServerInfo: React.FC<Props> = ({
                 }
             </div >
 
-            <ServerModalRename
-                showRenameModal={showRenameModal}
-                closeRename={closeRename}
-                serverTitle={serverTitle}
-                setServerTitle={setServerTitle}
-                renameServer={renameServer}
-            />
+            <ServerModalRename closeRename={closeRename} renameServerReq={renameServerReq} showRenameModal={showRenameModal}/>
 
-            <ServerModalEdit
-                showEditModal={showEditServerModal}
-                closeEdit={closeEdit}
-                channelTitle={channelTitle}
-                setChannelTitle={setChannelTitle}
-                editChannel={editChannel}
-                channels={channels}
-                setChannels={setChannels}
-            />
+            <ServerModalEdit closeEdit={closeEdit} showEditModal={showEditServerModal} editChannelsReq={editChannelsReq}/>
 
         </>
     )

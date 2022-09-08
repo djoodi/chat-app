@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap';
 
 interface Props {
-  channelTitle: string;
-  setChannelTitle: React.Dispatch<React.SetStateAction<string>>;
-  createChannel: () => void;
+  createChannelReq: (title:string)=>void;
 }
 
-const ChannelAddButton: React.FC<Props> = ({channelTitle, setChannelTitle, createChannel}) => {
+const ChannelAddButton: React.FC<Props> = ({createChannelReq}) => {
+
+  const [channelTitle, setChannelTitle] = useState<string>('');
 
   const [show, setShow] = useState(false);
 
@@ -26,14 +26,14 @@ const ChannelAddButton: React.FC<Props> = ({channelTitle, setChannelTitle, creat
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Control type='text' placeholder='server title' autoFocus value={channelTitle} onChange={e => setChannelTitle(e.target.value)} />
+            <Form.Control type='text' placeholder='server title' autoFocus value={channelTitle} onChange={e => {setChannelTitle(e.target.value)}} />
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={(e) => { createChannel(); handleClose() }}>
+          <Button variant="primary" onClick={(e) => { createChannelReq(channelTitle); handleClose() }}>
             Save
           </Button>
         </Modal.Footer>

@@ -1,14 +1,14 @@
-export interface AuthInfo {
+export interface IAuth {
     username: string;
     password: string;
 }
 
-export interface ServerInfo {
+export interface IServer {
     id: string;
     title: string;
 }
 
-export interface ChannelInfo {
+export interface IChannel {
     id: string;
     title: string;
 }

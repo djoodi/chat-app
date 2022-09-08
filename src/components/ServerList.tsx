@@ -1,26 +1,27 @@
 import React from 'react'
-import { ServerInfo } from '../models';
-import Server from './Server';
+import { IServer } from '../models';
+import { useAppSelector } from '../store/store';
+import ServerTile from './ServerTile';
 import ServerAddButton from './ServerAddButton';
 import './styles.css';
 
 interface Props {
-  serverTitle: string;
-  setServerTitle: React.Dispatch<React.SetStateAction<string>>;
-  createServer: (e:React.MouseEvent<HTMLButtonElement>) => void;
-  servers: any;
-  setSelectedServer: React.Dispatch<React.SetStateAction<ServerInfo>>;
+  createServerReq: (title:string)=>void;
+  getChannels: (id:string)=>void;
 }
 
-const ServerList: React.FC<Props> = ({serverTitle, setServerTitle, createServer, servers, setSelectedServer}) => {
+const ServerList: React.FC<Props> = ({createServerReq, getChannels}) => {
+
+  const servers = useAppSelector((state)=>state.servers.servers);
+
   return (
     <div className='border-end border-3 d-flex flex-column gap-2 pt-2' id='serverList'>
       {servers? 
         servers.map((server:any)=>{
-          return <Server key={server._id} server={server} setSelectedServer={setSelectedServer}/>
+          return <ServerTile key={server.id} server={server} getChannels={getChannels}/>
         })
       : null}
-      <ServerAddButton serverTitle={serverTitle} setServerTitle={setServerTitle} createServer={createServer}/>
+      <ServerAddButton createServerReq={createServerReq}/>
     </div>
   )
 }

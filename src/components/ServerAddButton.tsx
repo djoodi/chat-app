@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap'
 
 interface Props {
-    serverTitle: string;
-    setServerTitle: React.Dispatch<React.SetStateAction<string>>;
-    createServer: (e:React.MouseEvent<HTMLButtonElement>) => void;
+    createServerReq: (arg:string)=>void;
 }
 
-const ServerAddButton: React.FC<Props> = ({serverTitle, setServerTitle, createServer}) => {
+const ServerAddButton: React.FC<Props> = ({createServerReq}) => {
 
 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const [serverTitle, setServerTitle] = useState<string>('');
 
     return (
         <>
@@ -34,7 +34,7 @@ const ServerAddButton: React.FC<Props> = ({serverTitle, setServerTitle, createSe
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={(e)=>{createServer(e); handleClose()}}>
+                    <Button variant="primary" onClick={()=>{createServerReq(serverTitle); handleClose()}}>
                         Save
                     </Button>
                 </Modal.Footer>

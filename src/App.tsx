@@ -5,8 +5,9 @@ import Axios from 'axios';
 import { io } from 'socket.io-client';
 import Login from './components/Login';
 import Register from './components/Register';
-import { AuthInfo } from './models';
+import { IAuth } from './models';
 import { Alert, Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
+import { useAppSelector, useAppDispatch } from './store/store';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
@@ -21,7 +22,7 @@ function App() {
 
 
   const [activeTab, setActiveTab] = useState<string>('login');
-  const [authInput, setAuthInput] = useState<AuthInfo>({ username: "", password: "" });
+  const [authInput, setAuthInput] = useState<IAuth>({ username: "", password: "" });
 
   const [error, setError] = useState<string>('');
   const [validated, setValidated] = useState<boolean>(false);

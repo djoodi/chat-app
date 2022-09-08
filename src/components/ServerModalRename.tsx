@@ -1,20 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap';
+import { useAppSelector } from '../store/store';
 
 interface Props {
     showRenameModal: boolean;
     closeRename: ()=>void;
-    renameServer: ()=>void;
-    serverTitle: string;
-    setServerTitle: React.Dispatch<React.SetStateAction<string>>;
+    renameServerReq: (title:string)=>void;
 }
 
-const ServerModalRename: React.FC<Props> = ({
-    showRenameModal, 
-    closeRename, 
-    renameServer, 
-    serverTitle, 
-    setServerTitle}) => {
+const ServerModalRename: React.FC<Props> = ({showRenameModal, closeRename, renameServerReq}) => {
+
+    const selectedServerID = useAppSelector((state)=>state.servers.selectedServer.id);
+    const [serverTitle, setServerTitle] = useState<string>('');
+
     return (
         <Modal centered show={showRenameModal} onHide={closeRename}>
             <Modal.Header closeButton>
@@ -29,7 +27,7 @@ const ServerModalRename: React.FC<Props> = ({
                 <Button variant="secondary" onClick={closeRename}>
                     Cancel
                 </Button>
-                <Button variant="primary" onClick={() => { renameServer(); closeRename() }}>
+                <Button variant="primary" onClick={() => {renameServerReq(serverTitle); closeRename() }}>
                     Save Changes
                 </Button>
             </Modal.Footer>

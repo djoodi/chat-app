@@ -2,13 +2,16 @@ import React from 'react'
 import { Dropdown } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
 import { BsGear } from 'react-icons/bs';
+import { useAppSelector } from '../store/store';
 
 interface Props {
   logout: ()=>void;
-  username: string;
 }
 
-const UserInfo: React.FC<Props> = ({logout, username}) => {
+const UserInfo: React.FC<Props> = ({logout}) => {
+
+  const username = useAppSelector((state)=>state.user.username);
+
   return (
     <div id='userInfo' className='border-top border-3 m-0 d-flex justify-content-between'>
       <h6 className='text-muted p-2'>{username}</h6>
