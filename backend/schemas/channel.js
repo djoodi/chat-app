@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { nextTick } = require('process');
+const Message = require('./message');
 const Schema = mongoose.Schema;
 
 const ChannelSchema = new Schema({
@@ -11,5 +13,27 @@ const ChannelSchema = new Schema({
         ref: 'Message'
     }],
 });
+
+ChannelSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
+        await Message.deleteMany({
+            _id: {
+                $in: doc.messages
+            }
+        })
+    }
+});
+
+ChannelSchema.post('deleteMany', async function (doc) {
+    if (doc) {
+        await Message.deleteMany({
+            _id: {
+                $in: doc.messages
+            }
+        })
+    }
+})
+
+// Channels don't have a reference to the server that they're in, so clean up has to happen at the route-level
 
 module.exports = mongoose.model("Channel", ChannelSchema);

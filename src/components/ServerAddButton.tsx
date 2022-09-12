@@ -11,9 +11,18 @@ const ServerAddButton: React.FC<Props> = ({createServerReq}) => {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        setServerTitle('');
+    }
 
     const [serverTitle, setServerTitle] = useState<string>('');
+
+    const handleSubmit = (e:React.FormEvent) => {
+        e.preventDefault();
+        createServerReq(serverTitle);
+        handleClose();
+    }
 
     return (
         <>
@@ -25,19 +34,19 @@ const ServerAddButton: React.FC<Props> = ({createServerReq}) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Create a server</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <Form>
+                <Form onSubmit={e=>handleSubmit(e)}>
+                    <Modal.Body>
                         <Form.Control type='text' placeholder='server title' autoFocus value={serverTitle} onChange={e=>setServerTitle(e.target.value)}/>
-                    </Form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={()=>{createServerReq(serverTitle); handleClose()}}>
-                        Save
-                    </Button>
-                </Modal.Footer>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" type='submit'>
+                            Save
+                        </Button>
+                    </Modal.Footer>
+                </Form>
             </Modal>
         </>
     )

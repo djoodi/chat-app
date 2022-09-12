@@ -39,10 +39,7 @@ router.put('/edit', isLoggedIn, isAuthor, async(req, res) => {
 router.delete('/delete', isLoggedIn, isAuthor, async(req, res)=>{
     const {id} = req.body;
     await User.findByIdAndUpdate(req.user._id, {$pull:{servers: id}})
-    const server = await Server.findById(id);
-    server.channels.forEach(async (channelID) => {
-        await Channel.findByIdAndDelete(channelID);
-    })
+    // channels + messages are deleted thru mongoose middleware
     await Server.findByIdAndDelete(id);
     res.send('Server Deleted');
 });

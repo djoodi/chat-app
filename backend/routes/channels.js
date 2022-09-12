@@ -22,4 +22,19 @@ router.post('/create', isLoggedIn, isAuthor, async (req, res) => {
     res.send(channel);
 });
 
+router.put('/edit', isLoggedIn, isAuthor, async (req, res) => {
+    const {id, edits, deletes} = req.body;
+    deletes.forEach(async(delAction) => {
+        console.log(delAction);
+        await Server.findByIdAndUpdate(id, {$pull: {channels: delAction.payload.id}});
+        await Channel.findByIdAndDelete(delAction.payload.id);
+    });
+    edits.forEach(async (editAction) => {
+        console.log(editAction);
+        await Channel.findByIdAndUpdate(editAction.payload.id, {title: editAction.payload.title});
+    });
+
+    res.send('Channels edited');
+})
+
 module.exports = router;

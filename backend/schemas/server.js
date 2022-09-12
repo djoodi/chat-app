@@ -1,3 +1,5 @@
+const { channel } = require('diagnostics_channel');
+const { Server } = require('http');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Channel = require('./channel');
@@ -22,5 +24,27 @@ const ServerSchema = new Schema({
         ref: 'Channel',
     }],
 });
+
+// TODO, delete channels when server is deleted
+
+ServerSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
+        await Channel.deleteMany({
+            _id: {
+                $in: doc.channels
+            }
+        })
+    }
+})
+
+ServerSchema.post('deleteMany', async function (doc) {
+    if (doc) {
+        await Channel.deleteMany({
+            _id: {
+                $in: doc.channels
+            }
+        })
+    }
+})
 
 module.exports = mongoose.model("Server", ServerSchema);

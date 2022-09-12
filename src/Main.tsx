@@ -5,7 +5,7 @@ import ChannelList from './components/ChannelList';
 import MemberList from './components/MemberList';
 import MessagePanel from './components/MessagePanel';
 import './components/styles.css';
-import { IServer, IChannel } from './models';
+import { IServer, IChannel, IEditChannelAction } from './models';
 import { useAppSelector, useAppDispatch } from './store/store'
 import { clearUser, setUser } from './store/userSlice';
 import { addServer, removeServer, renameServer, setSelectedServer, setServers } from './store/serversSlice';
@@ -70,8 +70,8 @@ const Main = () => {
     }).then((res) => {
       console.log(res);
 
-      dispatch(addServer({id: res.data._id, title: res.data.title}));
-      dispatch(setChannels(res.data.channels));
+      dispatch(addServer({id: res.data.server._id, title: res.data.server.title}));
+      dispatch(setChannels([{id: res.data.channel._id, title: res.data.channel.title}]));
       dispatch(setSelectedChannel({id: res.data.channel._id}));
     });
   };
@@ -87,6 +87,7 @@ const Main = () => {
     }).then(res => {
       console.log(res);
       dispatch(removeServer(servers.selectedServer.id)); // remove server client side instead of getting servers again silly
+      // ^^ this dispatch auto selects the server for us
     });
   }
 
@@ -110,12 +111,12 @@ const Main = () => {
       console.log("no server id", serverID);
       return;
     }
-    console.log('getting channels');
     Axios({
       method: 'GET',
       withCredentials: true,
       url: `http://localhost:4000/channels/index/${serverID}`
     }).then (res => {
+      console.log(res);
       if (res.data.length) {
         dispatch(setChannels(res.data.map((channel:any)=>{
           return {id: channel._id, title: channel.title};
@@ -139,8 +140,24 @@ const Main = () => {
     })
   }
 
-  const editChannelsReq = (channels: IChannel[]) => {
+  const editChannelsReq = (actions: IEditChannelAction[]) => {
+    const edits = actions.filter(action => action.type==='EDIT');
+    const deletes = actions.filter(action => action.type==='DELETE');
 
+    Axios({
+      method: 'PUT',
+      withCredentials: true,
+      data: {
+        id: servers.selectedServer.id,
+        edits,
+        deletes
+      },
+      url: 'http://localhost:4000/channels/edit'
+    }).then (res => {
+      console.log(res);
+
+      getChannels(servers.selectedServer.id); // doing this as a test. you should just delete them client side instead of making this call
+    })
   }
 
   const logout = () => {
@@ -162,17 +179,17 @@ const Main = () => {
     getUser();
     getServers();
 
-    // if (!didMount.current) {
-    //   didMount.current = true;
-    //   return;
-    // }
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
+    }
 
-    // getChannels(servers.selectedServer.id);
+    getChannels(servers.selectedServer.id);
 
     return () => {
 
     }
-  }, [])
+  }, [servers.servers])
 
   return (
     <div>

@@ -3,12 +3,12 @@ import { Button, Form, Modal, Alert, InputGroup } from 'react-bootstrap';
 import { useAppSelector } from '../store/store';
 
 interface Props {
-  createChannelReq: (title:string)=>void;
+  createChannelReq: (title: string) => void;
 }
 
-const ChannelAddButton: React.FC<Props> = ({createChannelReq}) => {
+const ChannelAddButton: React.FC<Props> = ({ createChannelReq }) => {
 
-  const channels = useAppSelector((state)=>state.channels.channels);
+  const channels = useAppSelector((state) => state.channels.channels);
 
   const [channelTitle, setChannelTitle] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -25,8 +25,9 @@ const ChannelAddButton: React.FC<Props> = ({createChannelReq}) => {
     setShow(true);
   }
 
-  const handleCreateChannel = () => {
-
+  const handleCreateChannel = (e: React.FormEvent) => {
+    e.preventDefault();
+    
     // check if a channel with the same name already exists
     const match = channels.findIndex(channel => channel.title === `#${channelTitle}`);
     console.log(match);
@@ -43,7 +44,7 @@ const ChannelAddButton: React.FC<Props> = ({createChannelReq}) => {
       return;
     }
 
-    createChannelReq(channelTitle); 
+    createChannelReq(channelTitle);
     handleClose();
     setChannelTitle('');
     setError('');
@@ -51,32 +52,32 @@ const ChannelAddButton: React.FC<Props> = ({createChannelReq}) => {
 
   return (
     <>
-      <div className='channel border-bottom border-1 p-2' onClick={()=>handleShow()}>
+      <div className='channel border-bottom border-1 p-2' onClick={() => handleShow()}>
         <p className='mb-0 text-muted'>&#43; Add Channel</p>
       </div>
 
-      <Modal centered show={show} onHide={()=>{handleClose(); }}>
+      <Modal centered show={show} onHide={() => { handleClose(); }}>
         <Modal.Header closeButton>
           <Modal.Title>Create a channel</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Alert variant='danger' show={!!error}>{error}</Alert>
-          
-          <Form>
+        <Form onSubmit={(e)=>handleCreateChannel(e)}>
+          <Modal.Body>
+            <Alert variant='danger' show={!!error}>{error}</Alert>
+
             <InputGroup>
               <InputGroup.Text>#</InputGroup.Text>
-              <Form.Control type='text' placeholder='server title' autoFocus value={channelTitle} onChange={e => {setChannelTitle(e.target.value)}} />
+              <Form.Control type='text' placeholder='server title' autoFocus value={channelTitle} onChange={e => { setChannelTitle(e.target.value) }} />
             </InputGroup>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer className='d-flex flex-row'>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleCreateChannel}>
-            Save
-          </Button>
-        </Modal.Footer>
+          </Modal.Body>
+          <Modal.Footer className='d-flex flex-row'>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" type='submit'>
+              Save
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
     </>
   )

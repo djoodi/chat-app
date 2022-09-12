@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Dropdown, Form, Modal } from 'react-bootstrap'
 import { IconContext } from 'react-icons'
 import { BsGear } from 'react-icons/bs'
-import { IChannel } from '../models';
+import { IChannel, IEditChannelAction } from '../models';
 import { useAppSelector } from '../store/store';
 import ServerModalEdit from './ServerModalEdit';
 import ServerModalRename from './ServerModalRename';
@@ -10,7 +10,7 @@ import ServerModalRename from './ServerModalRename';
 interface Props {
     deleteServerReq: (arg:string)=>void;
     renameServerReq: (title: string)=>void;
-    editChannelsReq: (channels: IChannel[])=>void;
+    editChannelsReq: (actions: IEditChannelAction[])=>void;
 }
 
 const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChannelsReq }) => {
@@ -25,6 +25,7 @@ const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChan
     const showRename = () => setShowRenameModal(true);
     const closeEdit = () => setShowEditServerModal(false);
     const showEdit = () => setShowEditServerModal(true);
+    
 
     return (
         <>

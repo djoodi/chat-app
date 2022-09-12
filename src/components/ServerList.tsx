@@ -21,7 +21,7 @@ const ServerList: React.FC<Props> = ({createServerReq, getChannels}) => {
           return <ServerTile key={server.id} server={server} getChannels={getChannels}/>
         })
       : null}
-      <ServerAddButton createServerReq={createServerReq}/>
+      <ServerAddButton key={Date.now()} createServerReq={createServerReq}/>
     </div>
   )
 }

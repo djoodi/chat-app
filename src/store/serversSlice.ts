@@ -33,6 +33,10 @@ export const serversSlice = createSlice({
         },
         setSelectedServer: (state, action) => {
             state.selectedServer = state.servers.find((server) => server.id === action.payload.id) || {} as IServer
+        },
+        clearServers: (state) => {
+            state.servers = [];
+            state.selectedServer = {} as IServer;
         }
     }
 });

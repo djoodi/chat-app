@@ -7,7 +7,7 @@ import EditChannel from './EditChannel';
 interface Props {
     closeEdit: () => void;
     showEditModal: boolean;
-    editChannelsReq: (channels: IChannel[]) => void;
+    editChannelsReq: (actions: IEditChannelAction[]) => void;
 }
 
 const ServerModalEdit: React.FC<Props> = ({ closeEdit, showEditModal, editChannelsReq }) => {
@@ -23,12 +23,13 @@ const ServerModalEdit: React.FC<Props> = ({ closeEdit, showEditModal, editChanne
     }
 
     const pushChanges = () => {
-        editChannelsReq([]);
+        console.log(actions);
+        editChannelsReq(actions);
         handleClose();
     }
 
     useEffect(() => {
-        setCopies(channels.slice())
+        setCopies(channels?.slice())
         return () => {
         }
     }, [channels])
@@ -40,7 +41,7 @@ const ServerModalEdit: React.FC<Props> = ({ closeEdit, showEditModal, editChanne
             </Modal.Header>
             <Modal.Body>
                 {
-                    copies.map((channel) => {
+                    copies?.map((channel) => {
                         return (
                             <EditChannel key={channel.id} channelID={channel.id} title={channel.title} actions={actions} setActions={setActions} copies={copies} setCopies={setCopies}/>
                         )

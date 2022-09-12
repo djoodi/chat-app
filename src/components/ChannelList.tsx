@@ -1,5 +1,5 @@
 import React from 'react'
-import { IChannel } from '../models';
+import { IChannel, IEditChannelAction } from '../models';
 import ChannelAddButton from './ChannelAddButton';
 import Channel from './Channel';
 import ServerInfo from './ServerInfo';
@@ -10,7 +10,7 @@ import { useAppSelector } from '../store/store';
 interface Props {
   deleteServerReq: (arg:string)=>void;
   renameServerReq: (title:string)=>void;
-  editChannelsReq: (channels: IChannel[])=>void;
+  editChannelsReq: (actions: IEditChannelAction[])=>void;
   logout: ()=>void;
   createChannelReq: (title:string)=>void;
 }
