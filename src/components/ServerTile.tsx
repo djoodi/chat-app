@@ -1,8 +1,9 @@
 import React from 'react'
 import { IServer } from '../models';
-import { setSelectedChannel } from '../store/channelsSlice';
 import { setSelectedServer } from '../store/serversSlice';
 import { useAppDispatch } from '../store/store';
+import { setView } from '../store/viewsSlice';
+import * as Views from '../views';
 
 interface Props {
   server: IServer
@@ -15,6 +16,7 @@ const ServerTile: React.FC<Props> = ({server, getChannels}) => {
 
   const handleSelectServer = () => {
     dispatch(setSelectedServer({id: server.id}));
+    dispatch(setView(Views.SERVERS));
     getChannels(server.id);
   }
 

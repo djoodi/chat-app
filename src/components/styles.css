@@ -78,6 +78,11 @@
     cursor: pointer;
 }
 
+.friend-icon {
+    cursor: pointer;
+    color: white;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
 }

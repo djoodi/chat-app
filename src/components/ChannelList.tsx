@@ -6,6 +6,8 @@ import ServerInfo from './ServerInfo';
 import './styles.css';
 import UserInfo from './UserInfo';
 import { useAppSelector } from '../store/store';
+import * as Views from '../views';
+import AddFriendButton from './AddFriendButton';
 
 interface Props {
   deleteServerReq: (arg:string)=>void;
@@ -16,27 +18,38 @@ interface Props {
 }
 
 const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editChannelsReq, logout, createChannelReq}) => {
-
+  
+  const view = useAppSelector((state)=> state.views.view);
   const channels = useAppSelector((state)=>state.channels.channels);
   const selectedServer = useAppSelector((state)=>state.servers.selectedServer);
 
+
   return (
     <div className='border-end border-3 d-flex flex-column' id='channelList'>
-      <ServerInfo deleteServerReq={deleteServerReq} renameServerReq={renameServerReq} editChannelsReq={editChannelsReq}/>
+      {
+        view === Views.SERVERS ?
+          <ServerInfo deleteServerReq={deleteServerReq} renameServerReq={renameServerReq} editChannelsReq={editChannelsReq}/>
+          : view === Views.FRIENDS ? 
+            <AddFriendButton/>
+            : null
+      }
 
       <div className='d-flex flex-column flex-grow-1' id='channelContainer'>
-        {channels ?
+        {channels && view === Views.SERVERS ?
           channels.map((channel) => {
             return (<Channel key={channel.id} channelID={channel.id} title={channel.title}/>);
           })
           : null
         }
-        {selectedServer? 
+
+        {selectedServer && view === Views.SERVERS? 
           <ChannelAddButton createChannelReq={createChannelReq}
           />
         
           : null
         }
+
+        {view === Views.FRIENDS}
       </div>
 
       <UserInfo logout={logout}/>

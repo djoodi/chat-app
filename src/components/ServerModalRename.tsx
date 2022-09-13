@@ -4,30 +4,32 @@ import { useAppSelector } from '../store/store';
 
 interface Props {
     showRenameModal: boolean;
-    closeRename: ()=>void;
-    renameServerReq: (title:string)=>void;
+    closeRename: () => void;
+    renameServerReq: (title: string) => void;
 }
 
-const ServerModalRename: React.FC<Props> = ({showRenameModal, closeRename, renameServerReq}) => {
+const ServerModalRename: React.FC<Props> = ({ showRenameModal, closeRename, renameServerReq }) => {
 
-    
-    const selectedServerID = useAppSelector((state)=>state.servers.selectedServer.id);
+
+    const selectedServerID = useAppSelector((state) => state.servers.selectedServer.id);
     const [serverTitle, setServerTitle] = useState<string>('');
     const [error, setError] = useState<string>('');
-    
-    const handleRenameServer = () => {
-    
+
+    const handleRenameServer = (e: React.FormEvent) => {
+
+        e.preventDefault();
+
         const format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-    
+
         if (format.test(serverTitle)) {
-          setError("You can't use special symbols in a server title!");
-          return;
+            setError("You can't use special symbols in a server title!");
+            return;
         }
-    
+
         renameServerReq(serverTitle);
         handleClose();
     }
-    
+
     const handleClose = () => {
         closeRename();
         setError('');
@@ -39,20 +41,20 @@ const ServerModalRename: React.FC<Props> = ({showRenameModal, closeRename, renam
             <Modal.Header closeButton>
                 <Modal.Title>Rename server</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                <Alert variant='danger' show={!!error}>{error}</Alert>
-                <Form>
+            <Form onSubmit={(e)=>handleRenameServer(e)}>
+                <Modal.Body>
+                    <Alert variant='danger' show={!!error}>{error}</Alert>
                     <Form.Control type='text' placeholder='new server title' autoFocus value={serverTitle} onChange={e => setServerTitle(e.target.value)} />
-                </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Cancel
-                </Button>
-                <Button variant="primary" onClick={handleRenameServer}>
-                    Save Changes
-                </Button>
-            </Modal.Footer>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" type='submit'>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Form>
         </Modal>
     )
 }

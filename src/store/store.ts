@@ -3,12 +3,16 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import userReducer from './userSlice';
 import serversReducer from './serversSlice';
 import channelsReducer from './channelsSlice';
+import membersReducer from './membersSlice';
+import viewsReducer from './viewsSlice';
 
 export const store = configureStore({
     reducer: {
         user: userReducer,
         servers: serversReducer,
-        channels: channelsReducer
+        channels: channelsReducer,
+        members: membersReducer,
+        views: viewsReducer
     }
 });
 

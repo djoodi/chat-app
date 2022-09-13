@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { IMember } from "../models";
 
 
 const initialState = {
     id: '',
-    username: ''
+    username: '',
+    friends: [] as IMember[]
 }
 
 export const userSlice = createSlice({

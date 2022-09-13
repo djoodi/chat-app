@@ -17,3 +17,8 @@ export interface IEditChannelAction {
     type: string;
     payload: {id: string, title?: string}
 }
+
+export interface IMember {
+    id: string;
+    username: string;
+}

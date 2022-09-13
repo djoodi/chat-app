@@ -7,6 +7,10 @@ const UserSchema = Schema({
     servers: [{
         type: Schema.Types.ObjectId,
         ref: 'Server'
+    }],
+    friends: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }]
 });
 
@@ -21,6 +25,9 @@ UserSchema.post('findOneAndDelete', async function (doc) {
             _id: {
                 $in: doc.servers
             }
+        })
+        doc.friends.foreach(async (friend) => {
+            await Member.findByIdAndUpdate(friend_id, {$pull: {friends: doc._id}});
         })
     }
 })

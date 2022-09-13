@@ -10,6 +10,7 @@ import { useAppSelector, useAppDispatch } from './store/store'
 import { clearUser, setUser } from './store/userSlice';
 import { addServer, removeServer, renameServer, setSelectedServer, setServers } from './store/serversSlice';
 import { addChannel, setSelectedChannel, setChannels } from './store/channelsSlice';
+import * as Views from './views';
 
 const Main = () => {
 
@@ -26,7 +27,6 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/app'
     }).then((res) => {
-      console.log(res);
       if (res.data === false) {
         window.location.href = '/';
       }
@@ -39,7 +39,8 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/user'
     }).then((res) => {
-      dispatch(setUser({id: res.data._id, username: res.data.username}));});
+      console.log(res);
+      dispatch(setUser({id: res.data._id, username: res.data.username, friends: res.data.friends}));});
   };
 
   const getServers = async () => {
@@ -49,7 +50,6 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/servers/index'
     }).then((res) => {
-      console.log(res);
       if (!servers.selectedServer.title && res.data.length) {
         dispatch(setServers(res.data.map((server:any)=>{return{id: server._id, title: server.title}})));
         dispatch(setSelectedServer({id: res.data[0]._id}));
@@ -68,8 +68,6 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/servers/create'
     }).then((res) => {
-      console.log(res);
-
       dispatch(addServer({id: res.data.server._id, title: res.data.server.title}));
       dispatch(setChannels([{id: res.data.channel._id, title: res.data.channel.title}]));
       dispatch(setSelectedChannel({id: res.data.channel._id}));
@@ -85,7 +83,6 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/servers/delete'
     }).then(res => {
-      console.log(res);
       dispatch(removeServer(servers.selectedServer.id)); // remove server client side instead of getting servers again silly
       // ^^ this dispatch auto selects the server for us
     });
@@ -101,7 +98,6 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/servers/edit'
     }).then (res=>{
-      console.log(res);
       dispatch(renameServer({id: servers.selectedServer.id, title: serverTitle}));
     });
   };
@@ -116,7 +112,6 @@ const Main = () => {
       withCredentials: true,
       url: `http://localhost:4000/channels/index/${serverID}`
     }).then (res => {
-      console.log(res);
       if (res.data.length) {
         dispatch(setChannels(res.data.map((channel:any)=>{
           return {id: channel._id, title: channel.title};
@@ -154,8 +149,6 @@ const Main = () => {
       },
       url: 'http://localhost:4000/channels/edit'
     }).then (res => {
-      console.log(res);
-
       getChannels(servers.selectedServer.id); // doing this as a test. you should just delete them client side instead of making this call
     })
   }

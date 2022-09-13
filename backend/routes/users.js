@@ -3,18 +3,21 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const {isLoggedIn} = require('../middleware');
+const Server = require('../schemas/server');
 
 // routes
 router.get('/user', isLoggedIn, (req, res) => {
-    console.log(`user is authenticated, session is ${
-        req.session.id
-    }`);
     res.send(req.user);
 });
 
 router.get('/app', isLoggedIn, (req, res) => {
-    
+    // this route only exists to check if user is logged in
 });
+
+router.get('/members/:id', isLoggedIn, async(req, res)=> {
+    const {id} = req.params;
+    const server = await Server.findById(id).populate('members', '_id username');
+})
 
 router.post('/login', (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
