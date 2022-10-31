@@ -5,7 +5,8 @@ import { IMember } from "../models";
 const initialState = {
     id: '',
     username: '',
-    friends: [] as IMember[]
+    friends: [] as IMember[],
+    friendRequests: [] as IMember[]
 }
 
 export const userSlice = createSlice({

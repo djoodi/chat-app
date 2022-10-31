@@ -4,7 +4,11 @@ import { IconContext } from 'react-icons'
 import { BsFillPersonPlusFill } from 'react-icons/bs'
 import './styles.css';
 
-const AddFriendButton = () => {
+interface Props {
+    sendFriendRequest: (recipient: string)=>void;
+  }
+
+const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
 
     const [show, setShow] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -21,6 +25,7 @@ const AddFriendButton = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        sendFriendRequest(friend);
     }
 
     return (
@@ -40,7 +45,7 @@ const AddFriendButton = () => {
                 <Modal.Header closeButton>
                     <Modal.Title>Add a friend</Modal.Title>
                 </Modal.Header>
-                <Form>
+                <Form onSubmit={(e)=>handleSubmit(e)}>
                     <Modal.Body>
                         <Alert variant='danger' show={!!error}>{error}</Alert>
                         <Form.Control type='text' placeholder="friend's username" autoFocus value={friend} onChange={e => setFriend(e.target.value)} />
@@ -53,7 +58,7 @@ const AddFriendButton = () => {
                             Send Friend Request
                         </Button>
                     </Modal.Footer>
-                </Form>
+                </Form >
             </Modal>
         </>
     )

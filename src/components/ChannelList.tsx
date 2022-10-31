@@ -15,9 +15,10 @@ interface Props {
   editChannelsReq: (actions: IEditChannelAction[])=>void;
   logout: ()=>void;
   createChannelReq: (title:string)=>void;
+  sendFriendRequest: (recipient: string)=>void;
 }
 
-const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editChannelsReq, logout, createChannelReq}) => {
+const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editChannelsReq, logout, createChannelReq, sendFriendRequest}) => {
   
   const view = useAppSelector((state)=> state.views.view);
   const channels = useAppSelector((state)=>state.channels.channels);
@@ -30,7 +31,7 @@ const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editCh
         view === Views.SERVERS ?
           <ServerInfo deleteServerReq={deleteServerReq} renameServerReq={renameServerReq} editChannelsReq={editChannelsReq}/>
           : view === Views.FRIENDS ? 
-            <AddFriendButton/>
+            <AddFriendButton sendFriendRequest={sendFriendRequest}/>
             : null
       }
 

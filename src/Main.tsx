@@ -149,7 +149,21 @@ const Main = () => {
       },
       url: 'http://localhost:4000/channels/edit'
     }).then (res => {
-      getChannels(servers.selectedServer.id); // doing this as a test. you should just delete them client side instead of making this call
+      getChannels(servers.selectedServer.id); // TODO: doing this as a test. you should just delete them client side instead of making this call
+    })
+  }
+
+  const sendFriendRequest = (recipient: string) => {
+    Axios({
+      method: 'POST',
+      withCredentials: true,
+      data: {
+        recipient: recipient
+      },
+      url: 'http://localhost:4000/friendRequest'
+    }).then (res => {
+      console.log('sent friend request');
+      console.log(res)
     })
   }
 
@@ -193,7 +207,8 @@ const Main = () => {
           renameServerReq={renameServerReq} 
           editChannelsReq={editChannelsReq} 
           logout={logout}
-          createChannelReq={createChannelReq}/>
+          createChannelReq={createChannelReq}
+          sendFriendRequest={sendFriendRequest}/>
         <MessagePanel />
         <MemberList />
       </div>

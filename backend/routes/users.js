@@ -55,6 +55,22 @@ router.post('/register', (req, res) => {
     console.log(req.body);
 });
 
+router.post('/friendRequest', isLoggedIn, async (req, res) => {
+    // user id
+    // recipient id
+    const recipient = await User.findByUsername(req.body.recipient);
+    if (recipient != null) {
+        recipient.friendRequests.push(req.user.id);
+        await recipient.save();
+        res.send(true);
+    } else {
+        res.send(false);
+    }
+    // check if recipient already has a friend request from the user
+    // if not, then send friend request
+    // if yes, do nothing
+    
+})
 
 router.get('/logout', isLoggedIn, (req, res) => {
     req.logOut((err) => {
