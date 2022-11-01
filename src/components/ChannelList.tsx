@@ -8,6 +8,7 @@ import UserInfo from './UserInfo';
 import { useAppSelector } from '../store/store';
 import * as Views from '../views';
 import AddFriendButton from './AddFriendButton';
+import FriendList from './FriendList';
 
 interface Props {
   deleteServerReq: (arg:string)=>void;
@@ -15,7 +16,7 @@ interface Props {
   editChannelsReq: (actions: IEditChannelAction[])=>void;
   logout: ()=>void;
   createChannelReq: (title:string)=>void;
-  sendFriendRequest: (recipient: string)=>void;
+  sendFriendRequest: (recipient: string, callback: (message: string, isSuccess: boolean) => void)=>void;
 }
 
 const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editChannelsReq, logout, createChannelReq, sendFriendRequest}) => {
@@ -40,7 +41,9 @@ const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editCh
           channels.map((channel) => {
             return (<Channel key={channel.id} channelID={channel.id} title={channel.title}/>);
           })
-          : null
+          : view === Views.FRIENDS ? 
+            <FriendList/>
+            : null
         }
 
         {selectedServer && view === Views.SERVERS? 

@@ -5,14 +5,25 @@ import { BsFillPersonPlusFill } from 'react-icons/bs'
 import './styles.css';
 
 interface Props {
-    sendFriendRequest: (recipient: string)=>void;
+    sendFriendRequest: (recipient: string, callback: (message: string, isSuccess: boolean) => void)=>void;
   }
 
 const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
 
     const [show, setShow] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [variant, setVariant] = useState<string>('');
     const [friend, setFriend] = useState<string>('');
+
+    const flashMessage = (message: string, isSuccess: boolean) => {
+        if (isSuccess) setVariant('success');
+        else setVariant('danger');
+
+        setError(message);
+        setTimeout(()=> {
+            setError('');
+        }, 3000);
+    }
 
     const handleClose = () => {
         setShow(false);
@@ -25,7 +36,7 @@ const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        sendFriendRequest(friend);
+        sendFriendRequest(friend, flashMessage);
     }
 
     return (
@@ -47,7 +58,7 @@ const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
                 </Modal.Header>
                 <Form onSubmit={(e)=>handleSubmit(e)}>
                     <Modal.Body>
-                        <Alert variant='danger' show={!!error}>{error}</Alert>
+                        <Alert variant={variant} show={!!error}>{error}</Alert>
                         <Form.Control type='text' placeholder="friend's username" autoFocus value={friend} onChange={e => setFriend(e.target.value)} />
                     </Modal.Body>
                     <Modal.Footer>

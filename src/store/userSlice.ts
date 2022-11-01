@@ -16,6 +16,8 @@ export const userSlice = createSlice({
         setUser: (state, action) => {
             state.id = action.payload.id;
             state.username = action.payload.username;
+            state.friends = action.payload.friends;
+            state.friendRequests = action.payload.friendRequests;
         },
         clearUser: (state) => {
             state = initialState;

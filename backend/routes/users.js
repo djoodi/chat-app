@@ -60,9 +60,18 @@ router.post('/friendRequest', isLoggedIn, async (req, res) => {
     // recipient id
     const recipient = await User.findByUsername(req.body.recipient);
     if (recipient != null) {
-        recipient.friendRequests.push(req.user.id);
-        await recipient.save();
-        res.send(true);
+        const request = recipient.friendRequests.includes(req.user.id);
+        console.log(request);
+        if (request) {
+            console.log('friend request already exists');
+            res.send(true);
+        }
+        else {
+            recipient.friendRequests.push(req.user.id);
+            console.log('sending new friend request');
+            await recipient.save();
+            res.send(true);
+        }
     } else {
         res.send(false);
     }

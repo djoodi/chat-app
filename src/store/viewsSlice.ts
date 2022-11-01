@@ -3,7 +3,7 @@ import * as Views from '../views';
 
 
 const initialState = {
-    view: Views.SERVERS
+    view: Views.FRIENDS
 }
 
 export const viewsSlice = createSlice({

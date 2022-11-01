@@ -2,7 +2,7 @@ import React from 'react'
 
 const Member = () => {
   return (
-    <div className='member border-bottom border-1 p-2'>
+    <div className='hoverable border-bottom border-1 p-2'>
       <p className='mb-0'>Member</p>
     </div>
   )

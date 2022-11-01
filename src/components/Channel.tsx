@@ -16,7 +16,7 @@ const Channel: React.FC<Props> = ({title, channelID}) => {
   }
 
   return (
-    <div key={channelID} className='channel border-bottom border-1 p-2' onClick={(e) => {dispatch(setSelectedChannel({id: channelID}))}}>
+    <div key={channelID} className='hoverable border-bottom border-1 p-2' onClick={(e) => {dispatch(setSelectedChannel({id: channelID}))}}>
         <p className='mb-0 text-muted'>{displayTitle()}</p>
     </div>
   )

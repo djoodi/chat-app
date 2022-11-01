@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from 'react-bootstrap'
 import { IconContext } from 'react-icons'
 import { FaUserFriends } from 'react-icons/fa'
 import { useAppDispatch } from '../store/store'
@@ -14,13 +15,13 @@ const FriendsButton = () => {
     }
 
     return (
-        <div className='d-flex justify-content-center align-items-middle serverIcon bg-secondary mx-auto rounded flex-shrink-0' onClick={handleClick}>
+        <Button variant='secondary' className='serverIcon mx-auto rounded flex-shrink-0 shadow-none' onClick={handleClick}>
             <IconContext.Provider value={{ className: 'friend-icon', style: { verticalAlign: 'middle' }}}>
                 <div>
                     <FaUserFriends />
                 </div>
             </IconContext.Provider>
-        </div>
+        </Button>
     )
 }
 

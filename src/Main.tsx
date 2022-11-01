@@ -40,7 +40,12 @@ const Main = () => {
       url: 'http://localhost:4000/user'
     }).then((res) => {
       console.log(res);
-      dispatch(setUser({id: res.data._id, username: res.data.username, friends: res.data.friends}));});
+      dispatch(setUser({
+        id: res.data._id, 
+        username: res.data.username, 
+        friends: res.data.friends, 
+        friendRequests: res.data.friendRequests
+      }));});
   };
 
   const getServers = async () => {
@@ -150,10 +155,11 @@ const Main = () => {
       url: 'http://localhost:4000/channels/edit'
     }).then (res => {
       getChannels(servers.selectedServer.id); // TODO: doing this as a test. you should just delete them client side instead of making this call
+      // actually, you will need to make some sort of socket event so all subscribed users (users in the server that are online) see the update
     })
   }
 
-  const sendFriendRequest = (recipient: string) => {
+  const sendFriendRequest = (recipient: string, callback: (message: string, isSuccess: boolean) => void) => {
     Axios({
       method: 'POST',
       withCredentials: true,
@@ -162,9 +168,12 @@ const Main = () => {
       },
       url: 'http://localhost:4000/friendRequest'
     }).then (res => {
-      console.log('sent friend request');
-      console.log(res)
-    })
+      if (res.data) {
+        callback('Friend Request sent!', true);
+      } else {
+        callback('User does not exist', false);
+      }
+    });
   }
 
   const logout = () => {

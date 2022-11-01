@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap'
+import { IconContext } from 'react-icons';
+import {HiPlusSm} from 'react-icons/hi';
 
 interface Props {
     createServerReq: (arg:string)=>void;
@@ -27,7 +29,10 @@ const ServerAddButton: React.FC<Props> = ({createServerReq}) => {
     return (
         <>
             <Button variant='secondary' className='serverIcon mx-auto rounded flex-shrink-0 shadow-none' onClick={handleShow}>
-                <h2 className='text-light text-center h-100 mt-0'>&#43;</h2>
+                {/* <h2 className='text-light text-center h-100 text-align-center'>&#43;</h2> */}
+                <IconContext.Provider value={{ className: "react-icons mb-1", style: { verticalAlign: 'middle' }}}>
+                    <HiPlusSm/>
+                </IconContext.Provider>
             </Button>
 
             <Modal centered show={show} onHide={handleClose}>
