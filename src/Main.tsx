@@ -43,9 +43,14 @@ const Main = () => {
       dispatch(setUser({
         id: res.data._id, 
         username: res.data.username, 
-        friends: res.data.friends, 
-        friendRequests: res.data.friendRequests
-      }));});
+        friends: res.data.friends.map((x: { _id: string, username: string })=>{
+          return {id: x._id, username: x.username};
+        }), 
+        friendRequests: res.data.friendRequests.map((x: { _id: string, username: string }) => 
+        {
+          return {id: x._id, username: x.username}
+        }
+      )}));});
   };
 
   const getServers = async () => {

@@ -4,7 +4,7 @@ import './styles.css';
 
 const MessageInput = () => {
   return (
-    <div className='border-top border-3' id='messageInput'>
+    <div className='border-top border-3 mt-auto' id='messageInput'>
       <Form className='h-100'>
         <InputGroup className='h-100'>
           <Form.Control type='text' className='border-0 rounded-0 shadow-none' placeholder='message #channel-title'/>

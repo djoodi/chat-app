@@ -1,15 +1,22 @@
 import React from 'react'
 import { IconContext } from 'react-icons'
 import {BsBellFill} from 'react-icons/bs'
-import { useAppSelector } from '../store/store';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { setView } from '../store/viewsSlice';
+import * as Views from '../views';
 
 const FriendList = () => {
 
   const user = useAppSelector((state)=>state.user);
+  const dispatch = useAppDispatch();
+
+  const handleClickFriendRequests = () => {
+    dispatch(setView(Views.REQUESTS));
+  }
 
   return (
     <div>
-      <div className='border-bottom border-1 p-2 hoverable' onClick={(e) => {}}>
+      <div className='border-bottom border-1 p-2 hoverable' onClick={handleClickFriendRequests}>
         <div className='d-flex'>
           <IconContext.Provider value={{ className: "text-muted react-icons mt-1", style: { verticalAlign: 'middle' } }}>
             <BsBellFill/>

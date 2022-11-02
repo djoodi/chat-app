@@ -44,7 +44,7 @@ const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
             <div id='serverInfo' className='d-flex justify-content-between border-bottom border-3'>
                 <h6 className='text-muted p-2 m-0'>Friends</h6>
                 <div id='add-friend-btn'>
-                    <Button variant='outline-secondary' id='dropdown-server' onClick={handleShow}>
+                    <Button variant='outline-secondary borderless' onClick={handleShow}>
                         <IconContext.Provider value={{ className: "react-icons mb-1", style: { verticalAlign: 'middle' } }}>
                             <BsFillPersonPlusFill />
                         </IconContext.Provider>

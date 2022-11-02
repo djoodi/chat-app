@@ -8,7 +8,7 @@ const {isLoggedIn, isAuthor} = require('../middleware');
 router.get('/index', isLoggedIn, async(req, res)=> {
     const {_id} = req.user;
     const user = await User.findById(_id).populate('servers');
-    console.log(user.servers);
+    //console.log(user.servers);
     res.send(user.servers);
 });
 

@@ -6,8 +6,10 @@ const {isLoggedIn} = require('../middleware');
 const Server = require('../schemas/server');
 
 // routes
-router.get('/user', isLoggedIn, (req, res) => {
-    res.send(req.user);
+router.get('/user', isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.user._id).populate('friends', '_id username').populate('friendRequests', '_id username');
+    console.log(user);
+    res.send(user);
 });
 
 router.get('/app', isLoggedIn, (req, res) => {
@@ -22,7 +24,7 @@ router.get('/members/:id', isLoggedIn, async(req, res)=> {
 router.post('/login', (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
         if (err) throw err;
-        if (!user) res.send('No User Exists');
+        if (!user) res.send('Wrong username or password');
         else {
             req.logIn(user, err => {
                 if (err) throw err;

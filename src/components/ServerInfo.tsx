@@ -34,7 +34,7 @@ const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChan
                 {selectedServerTitle ?
                     <div>
                         <Dropdown align='end'>
-                            <Dropdown.Toggle variant="outline-secondary" id="dropdown-server">
+                            <Dropdown.Toggle variant="outline-secondary borderless">
                                 <IconContext.Provider value={{ className: "react-icons mb-1" }}>
                                     <BsGear />
                                 </IconContext.Provider>

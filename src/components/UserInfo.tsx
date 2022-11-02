@@ -17,7 +17,7 @@ const UserInfo: React.FC<Props> = ({logout}) => {
       <h6 className='text-muted p-2'>{username}</h6>
       <div>
         <Dropdown align='end'>
-          <Dropdown.Toggle variant="outline-secondary" id="dropdown-user">
+          <Dropdown.Toggle variant="outline-secondary borderless">
             <IconContext.Provider value={{ className: "react-icons mb-1" }}>
               <BsGear />
             </IconContext.Provider>

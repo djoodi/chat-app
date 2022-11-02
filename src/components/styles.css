@@ -24,6 +24,10 @@
     
 } */
 
+#message-panel-title {
+    height:38px;
+}
+
 #messageList {
     overflow-y: scroll;
 }
@@ -36,11 +40,7 @@
     height: 45px;
 }
 
-#dropdown-server {
-    border: 0;
-}
-
-#dropdown-user {
+.borderless {
     border: 0;
 }
 
