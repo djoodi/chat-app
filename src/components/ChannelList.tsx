@@ -31,7 +31,7 @@ const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editCh
       {
         view === Views.SERVERS ?
           <ServerInfo deleteServerReq={deleteServerReq} renameServerReq={renameServerReq} editChannelsReq={editChannelsReq}/>
-          : view === Views.REQUESTS || view === Views.FRIENDS ? 
+          : view === Views.REQUESTS || view === Views.FRIENDS || view === Views.DIRECT_MESSAGE ? 
             <AddFriendButton sendFriendRequest={sendFriendRequest}/>
             : null
       }
@@ -41,7 +41,7 @@ const ChannelList: React.FC<Props> = ({ deleteServerReq, renameServerReq, editCh
           channels.map((channel) => {
             return (<Channel key={channel.id} channelID={channel.id} title={channel.title}/>);
           })
-          : view === Views.REQUESTS ||view === Views.FRIENDS ? 
+          : view === Views.REQUESTS ||view === Views.FRIENDS || view === Views.DIRECT_MESSAGE  ? 
             <FriendList/>
             : null
         }

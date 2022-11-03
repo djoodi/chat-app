@@ -7,15 +7,15 @@ import MessagePanel from './components/MessagePanel';
 import './components/styles.css';
 import { IServer, IChannel, IEditChannelAction } from './models';
 import { useAppSelector, useAppDispatch } from './store/store'
-import { clearUser, setUser } from './store/userSlice';
+import { clearUser, setUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend } from './store/userSlice';
 import { addServer, removeServer, renameServer, setSelectedServer, setServers } from './store/serversSlice';
 import { addChannel, setSelectedChannel, setChannels } from './store/channelsSlice';
 import * as Views from './views';
 
 const Main = () => {
 
-  const user = useAppSelector((state)=>state.user);
-  const servers = useAppSelector((state)=>state.servers);
+  const user = useAppSelector((state) => state.user);
+  const servers = useAppSelector((state) => state.servers);
 
   const dispatch = useAppDispatch();
 
@@ -41,16 +41,17 @@ const Main = () => {
     }).then((res) => {
       console.log(res);
       dispatch(setUser({
-        id: res.data._id, 
-        username: res.data.username, 
-        friends: res.data.friends.map((x: { _id: string, username: string })=>{
-          return {id: x._id, username: x.username};
-        }), 
-        friendRequests: res.data.friendRequests.map((x: { _id: string, username: string }) => 
-        {
-          return {id: x._id, username: x.username}
+        id: res.data._id,
+        username: res.data.username,
+        friends: res.data.friends.map((x: { _id: string, username: string }) => {
+          return { id: x._id, username: x.username };
+        }),
+        friendRequests: res.data.friendRequests.map((x: { _id: string, username: string }) => {
+          return { id: x._id, username: x.username }
         }
-      )}));});
+        )
+      }));
+    });
   };
 
   const getServers = async () => {
@@ -61,8 +62,8 @@ const Main = () => {
       url: 'http://localhost:4000/servers/index'
     }).then((res) => {
       if (!servers.selectedServer.title && res.data.length) {
-        dispatch(setServers(res.data.map((server:any)=>{return{id: server._id, title: server.title}})));
-        dispatch(setSelectedServer({id: res.data[0]._id}));
+        dispatch(setServers(res.data.map((server: any) => { return { id: server._id, title: server.title } })));
+        dispatch(setSelectedServer({ id: res.data[0]._id }));
         getChannels(res.data[0]._id);
       };
     })
@@ -78,9 +79,9 @@ const Main = () => {
       withCredentials: true,
       url: 'http://localhost:4000/servers/create'
     }).then((res) => {
-      dispatch(addServer({id: res.data.server._id, title: res.data.server.title}));
-      dispatch(setChannels([{id: res.data.channel._id, title: res.data.channel.title}]));
-      dispatch(setSelectedChannel({id: res.data.channel._id}));
+      dispatch(addServer({ id: res.data.server._id, title: res.data.server.title }));
+      dispatch(setChannels([{ id: res.data.channel._id, title: res.data.channel.title }]));
+      dispatch(setSelectedChannel({ id: res.data.channel._id }));
     });
   };
 
@@ -107,8 +108,8 @@ const Main = () => {
       },
       withCredentials: true,
       url: 'http://localhost:4000/servers/edit'
-    }).then (res=>{
-      dispatch(renameServer({id: servers.selectedServer.id, title: serverTitle}));
+    }).then(res => {
+      dispatch(renameServer({ id: servers.selectedServer.id, title: serverTitle }));
     });
   };
 
@@ -121,12 +122,12 @@ const Main = () => {
       method: 'GET',
       withCredentials: true,
       url: `http://localhost:4000/channels/index/${serverID}`
-    }).then (res => {
+    }).then(res => {
       if (res.data.length) {
-        dispatch(setChannels(res.data.map((channel:any)=>{
-          return {id: channel._id, title: channel.title};
+        dispatch(setChannels(res.data.map((channel: any) => {
+          return { id: channel._id, title: channel.title };
         })))
-        dispatch(setSelectedChannel({id: res.data[0]._id}));
+        dispatch(setSelectedChannel({ id: res.data[0]._id }));
       }
     })
   };
@@ -140,14 +141,14 @@ const Main = () => {
         channelTitle
       },
       url: 'http://localhost:4000/channels/create/'
-    }).then(res=>{
-      dispatch(addChannel({id: res.data._id, title: res.data.title}));
+    }).then(res => {
+      dispatch(addChannel({ id: res.data._id, title: res.data.title }));
     })
   }
 
   const editChannelsReq = (actions: IEditChannelAction[]) => {
-    const edits = actions.filter(action => action.type==='EDIT');
-    const deletes = actions.filter(action => action.type==='DELETE');
+    const edits = actions.filter(action => action.type === 'EDIT');
+    const deletes = actions.filter(action => action.type === 'DELETE');
 
     Axios({
       method: 'PUT',
@@ -158,7 +159,7 @@ const Main = () => {
         deletes
       },
       url: 'http://localhost:4000/channels/edit'
-    }).then (res => {
+    }).then(res => {
       getChannels(servers.selectedServer.id); // TODO: doing this as a test. you should just delete them client side instead of making this call
       // actually, you will need to make some sort of socket event so all subscribed users (users in the server that are online) see the update
     })
@@ -169,16 +170,44 @@ const Main = () => {
       method: 'POST',
       withCredentials: true,
       data: {
-        recipient: recipient
+        recipient
       },
       url: 'http://localhost:4000/friendRequest'
-    }).then (res => {
+    }).then(res => {
       if (res.data) {
         callback('Friend Request sent!', true);
       } else {
         callback('User does not exist', false);
       }
     });
+  }
+
+  const acceptFriendRequest = (id: string) => {
+    Axios({
+      method: 'POST',
+      withCredentials: true,
+      data: {
+        id
+      },
+      url: 'http://localhost:4000/acceptFriendRequest'
+    }).then(res => {
+      console.log(res);
+      dispatch(addFriend(res.data));
+      dispatch(removeFriendRequest(res.data.id));
+    })
+  }
+
+  const declineFriendRequest = (id: string) => {
+    Axios({
+      method: 'POST',
+      withCredentials: true,
+      data: {
+        id
+      },
+      url: 'http://localhost:4000/declineFriendRequest'
+    }).then(res => {
+      console.log(res);
+    })
   }
 
   const logout = () => {
@@ -215,15 +244,19 @@ const Main = () => {
   return (
     <div>
       <div id='main' className='d-flex vh-100'>
-        <ServerList createServerReq={createServerReq} getChannels={getChannels}/>
-        <ChannelList 
-          deleteServerReq={deleteServerReq} 
-          renameServerReq={renameServerReq} 
-          editChannelsReq={editChannelsReq} 
+        <ServerList createServerReq={createServerReq} getChannels={getChannels} />
+        <ChannelList
+          deleteServerReq={deleteServerReq}
+          renameServerReq={renameServerReq}
+          editChannelsReq={editChannelsReq}
           logout={logout}
           createChannelReq={createChannelReq}
-          sendFriendRequest={sendFriendRequest}/>
-        <MessagePanel />
+          sendFriendRequest={sendFriendRequest}
+        />
+        <MessagePanel
+          acceptFriendRequest={acceptFriendRequest}
+          declineFriendRequest={declineFriendRequest}
+        />
         <MemberList />
       </div>
     </div>

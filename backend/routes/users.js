@@ -81,6 +81,27 @@ router.post('/friendRequest', isLoggedIn, async (req, res) => {
     // if not, then send friend request
     // if yes, do nothing
     
+});
+
+router.post('/acceptFriendRequest', isLoggedIn, async (req, res) => {
+    console.log('accepted friend request from', req.body.id);
+    // remove friend request
+    const friend = await User.findById(req.body.id);
+    req.user.friends.push(friend._id);
+    req.user.friendRequests = req.user.friendRequests.filter(x => {
+        return x._id.toString() !== friend._id.toString();
+    });
+
+    await req.user.save();
+
+    console.log(req.user);
+    res.send({id: friend._id, username: friend.username});
+    // add friend
+    // res.send
+})
+
+router.post('/declineFriendRequest', isLoggedIn, (req, res) => {
+    console.log('declined friend request from', req.body.id);
 })
 
 router.get('/logout', isLoggedIn, (req, res) => {
