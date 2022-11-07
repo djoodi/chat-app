@@ -11,13 +11,10 @@ const FriendRequestList: React.FC<Props> = ({acceptFriendRequest,declineFriendRe
 
     const friendRequests = useAppSelector((state) => state.user.friendRequests);
 
-    useEffect(() => {
-        
-      
-        return () => {
-          
-        }
-      }, [friendRequests])
+    // useEffect(() => {
+    //     return () => {
+    //     }
+    //   }, [friendRequests])
 
     return (
         <div>

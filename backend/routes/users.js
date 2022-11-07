@@ -85,14 +85,18 @@ router.post('/friendRequest', isLoggedIn, async (req, res) => {
 
 router.post('/acceptFriendRequest', isLoggedIn, async (req, res) => {
     console.log('accepted friend request from', req.body.id);
-    // remove friend request
     const friend = await User.findById(req.body.id);
+    // update both users friend lists
     req.user.friends.push(friend._id);
+    friend.friends.push(req.user._id);
+
+    // remove friend request
     req.user.friendRequests = req.user.friendRequests.filter(x => {
         return x._id.toString() !== friend._id.toString();
     });
 
     await req.user.save();
+    await friend.save();
 
     console.log(req.user);
     res.send({id: friend._id, username: friend.username});
@@ -100,8 +104,16 @@ router.post('/acceptFriendRequest', isLoggedIn, async (req, res) => {
     // res.send
 })
 
-router.post('/declineFriendRequest', isLoggedIn, (req, res) => {
+router.post('/declineFriendRequest', isLoggedIn, async (req, res) => {
     console.log('declined friend request from', req.body.id);
+    const friend = await User.findById(req.body.id);
+    // remove friend request
+    req.user.friendRequests = req.user.friendRequests.filter(x => {
+        return x._id.toString() !== friend._id.toString();
+    });
+    
+    await req.user.save();
+    res.send({id:friend._id, username: friend.username});
 })
 
 router.get('/logout', isLoggedIn, (req, res) => {

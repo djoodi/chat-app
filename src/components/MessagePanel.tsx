@@ -5,41 +5,44 @@ import MessageInput from './MessageInput'
 import MessageList from './MessageList'
 import * as Views from '../views';
 import FriendRequestList from './FriendRequestList'
+import FriendTitle from './FriendTitle'
 
 interface Props {
   acceptFriendRequest: (id: string) => void;
   declineFriendRequest: (id: string) => void;
+  deleteFriend: (id: string) => void;
 }
 
-const MessagePanel: React.FC<Props> = ({acceptFriendRequest,declineFriendRequest}) => {
+const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendRequest, deleteFriend }) => {
 
-  const channelTitle = useAppSelector((state)=>state.channels.selectedChannel.title);
-  const view = useAppSelector((state)=>state.views.view);
-  const selectedFriend = useAppSelector((state)=>state.user.selectedFriend);
+  const channelTitle = useAppSelector((state) => state.channels.selectedChannel.title);
+  const view = useAppSelector((state) => state.views.view);
 
-  const displayTitle = () => {
+  const displayChannelTitle = () => {
     return channelTitle ? channelTitle.replace(" ", "-") : "";
   }
 
   return (
     <div id='messagePanel' className='flex-grow-1 flex-column d-flex w-60'>
-      <h6 className='text-muted border-bottom border-3 p-2 mb-0' id='message-panel-title'>
-        {view === Views.SERVERS ? 
-          displayTitle() 
+      <div className='border-bottom border-3'>
+        {view === Views.SERVERS ?
+          <h6 className='text-muted p-2 m-0'>
+            {displayChannelTitle()}
+          </h6>
           : view === Views.REQUESTS ?
-            'Friend Requests'
+            <h6 className='text-muted p-2 m-0'>Friend Requests</h6>
             : view === Views.DIRECT_MESSAGE ?
-              selectedFriend.username
+              <FriendTitle deleteFriend={deleteFriend}/>
               : null
-              }
-      </h6>
-      {view === Views.SERVERS ? 
-        <MessageList /> 
-          : view === Views.FRIENDS ?
-            null
-            : view === Views.REQUESTS ?
-            <FriendRequestList acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest}/>
-              : null}
+        }
+      </div>
+      {view === Views.SERVERS ?
+        <MessageList />
+        : view === Views.FRIENDS ?
+          null
+          : view === Views.REQUESTS ?
+            <FriendRequestList acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} />
+            : null}
       <MessageInput />
     </div>
   )

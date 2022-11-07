@@ -23,18 +23,23 @@ export const userSlice = createSlice({
         clearUser: (state) => {
             state = initialState;
         },
+        // takes an object of id and username
         addFriendRequest: (state, action) => {
             state.friendRequests.push(action.payload);
         },
+        // takes the ID
         removeFriendRequest: (state, action) => {
             state.friendRequests = state.friendRequests.filter(x => x.id !== action.payload)
         },
+        // takes an object of id and username
         addFriend: (state, action) => {
             state.friends.push(action.payload);
         },
+        // takes an ID
         removeFriend: (state, action) => {
             state.friends = state.friends.filter(x => x.id !== action.payload)
         },
+        // takes an object of id and username
         setSelectedFriend: (state, action) => {
             state.selectedFriend = action.payload;
         }

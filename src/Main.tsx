@@ -207,6 +207,20 @@ const Main = () => {
       url: 'http://localhost:4000/declineFriendRequest'
     }).then(res => {
       console.log(res);
+      dispatch(removeFriendRequest(res.data.id));
+    })
+  }
+
+  const deleteFriend = (id: string) => {
+    Axios({
+      method: 'DELETE',
+      withCredentials: true,
+      data: {
+        id
+      },
+      url: 'http://localhost:4000/deleteFriend'
+    }).then(res => {
+      dispatch(removeFriend(res.data))
     })
   }
 
@@ -256,6 +270,7 @@ const Main = () => {
         <MessagePanel
           acceptFriendRequest={acceptFriendRequest}
           declineFriendRequest={declineFriendRequest}
+          deleteFriend={deleteFriend}
         />
         <MemberList />
       </div>
