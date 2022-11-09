@@ -46,6 +46,10 @@
     height: 38px;
 }
 
+.messagePanelTitle {
+    height: 38px;
+}
+
 .react-icons {
     vertical-align: middle;
 }

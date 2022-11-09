@@ -4,6 +4,7 @@ const router = express.Router();
 const passport = require('passport');
 const {isLoggedIn} = require('../middleware');
 const Server = require('../schemas/server');
+const user = require('../schemas/user');
 
 // routes
 router.get('/user', isLoggedIn, async (req, res) => {
@@ -114,6 +115,23 @@ router.post('/declineFriendRequest', isLoggedIn, async (req, res) => {
     
     await req.user.save();
     res.send({id:friend._id, username: friend.username});
+});
+
+router.delete('/deleteFriend', isLoggedIn, async(req, res)=> {
+    const friend = await User.findById(req.body.id);
+
+    friend.friends = friend.friends.filter(x=> {
+        return x._id.toString() !== req.user._id.toString();
+    })
+
+    req.user.friends = req.user.friends.filter(x => {
+        return x._id.toString() !== friend._id.toString();
+    });
+
+    await friend.save();
+    await req.user.save();
+
+    res.send(friend._id);
 })
 
 router.get('/logout', isLoggedIn, (req, res) => {

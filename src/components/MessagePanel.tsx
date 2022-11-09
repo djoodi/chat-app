@@ -24,7 +24,7 @@ const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendReque
 
   return (
     <div id='messagePanel' className='flex-grow-1 flex-column d-flex w-60'>
-      <div className='border-bottom border-3'>
+      <div className='border-bottom border-3 messagePanelTitle'>
         {view === Views.SERVERS ?
           <h6 className='text-muted p-2 m-0'>
             {displayChannelTitle()}

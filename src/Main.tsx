@@ -220,7 +220,8 @@ const Main = () => {
       },
       url: 'http://localhost:4000/deleteFriend'
     }).then(res => {
-      dispatch(removeFriend(res.data))
+      console.log(res);
+      dispatch(removeFriend(res.data));
     })
   }
 
