@@ -50,8 +50,8 @@ const Main = () => {
       dispatch(setUser({
         id: res.data._id,
         username: res.data.username,
-        friends: res.data.friends.map((x: { _id: string, username: string }) => {
-          return { id: x._id, username: x.username };
+        friends: res.data.friends.map((x: { _id: string, username: string, online: boolean}) => {
+          return { id: x._id, username: x.username, online: x.online };
         }),
         friendRequests: res.data.friendRequests.map((x: { _id: string, username: string }) => {
           return { id: x._id, username: x.username }
@@ -296,7 +296,7 @@ const Main = () => {
   return (
     <div>
       <div id='main' className='d-flex vh-100'>
-        <ServerList createServerReq={createServerReq} getChannels={getChannels} />
+        <ServerList createServerReq={createServerReq} getChannels={getChannels} getUser={getUser}/>
         <ChannelList
           deleteServerReq={deleteServerReq}
           renameServerReq={renameServerReq}

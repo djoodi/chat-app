@@ -16,10 +16,10 @@ const UserSchema = Schema({
         type: Schema.Types.ObjectId,
         ref:'User'
     }],
-    online: [{
+    online:{
         type: Boolean,
         required: true
-    }]
+    }
 });
 
 UserSchema.plugin(passportLocalMongoose);

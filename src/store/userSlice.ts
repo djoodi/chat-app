@@ -8,7 +8,8 @@ const initialState = {
     friends: [] as IMember[],
     friendRequests: [] as IMember[],
     selectedFriend: {} as IMember,
-    socketID: ''
+    socketID: '',
+    online: true
 }
 
 export const userSlice = createSlice({

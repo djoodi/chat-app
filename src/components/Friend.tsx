@@ -23,6 +23,7 @@ const Friend: React.FC<Props> = ({ friend }) => {
 
     return (
         <div className="d-flex hoverable border-bottom border-1 p-2" onClick={handleClick}>
+            <p className="mb-0 text-muted">{friend.online? "online" : "offline"}</p>
             <p className="mb-0 text-muted">{friend.username}</p>
             <IconContext.Provider value={{ className: "text-muted react-icons mt-1 ms-auto", style: { verticalAlign: 'middle' }, size: '1.2em'}}>
                 <IoMdNotificationsOutline />

@@ -6,12 +6,17 @@ import { useAppDispatch } from '../store/store'
 import { setView } from '../store/viewsSlice'
 import * as Views from '../views'
 
-const FriendsButton = () => {
+interface Props {
+    getUser: ()=>void;
+}
+
+const FriendsButton:React.FC<Props> = ({getUser}) => {
 
     const dispatch = useAppDispatch();
 
     const handleClick = () => {
         dispatch(setView(Views.FRIENDS));
+        getUser();
     }
 
     return (
