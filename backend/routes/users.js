@@ -13,22 +13,28 @@ router.get('/user', isLoggedIn, async (req, res) => {
     res.send(user);
 });
 
-router.get('/app', isLoggedIn, (req, res) => {
-    // this route only exists to check if user is logged in
+router.get('/app', isLoggedIn, (req, res) => { // this route only exists to check if user is logged in
 });
 
-router.get('/members/:id', isLoggedIn, async(req, res)=> {
+router.get('/members/:id', isLoggedIn, async (req, res) => {
     const {id} = req.params;
     const server = await Server.findById(id).populate('members', '_id username');
 })
 
 router.post('/login', (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
-        if (err) throw err;
-        if (!user) res.send('Wrong username or password');
-        else {
+        if (err) 
+            throw err;
+        
+
+        if (! user) 
+            res.send('Wrong username or password');
+         else {
             req.logIn(user, err => {
-                if (err) throw err;
+                if (err) 
+                    throw err;
+                
+
                 res.send(true);
                 console.log('logging in', req.user.username);
             });
@@ -38,11 +44,28 @@ router.post('/login', (req, res, next) => {
 
 router.post('/register', (req, res) => {
     const {username, password} = req.body;
+
+    if (!validateUsername(username)) {
+        res.send("Username must contain alphanumeric characters only and be between 4-24 characters long. It cannot begin with a number.");
+        return;
+    }
+
+    if (!validatePassword(password)) {
+        res.send("Password must be 8-24 characters long.");
+        return;
+    }
+
     User.findOne({
         username
     }, async (err, doc) => {
-        if (err) throw err;
-        if (doc) res.send('User Already Exists');
+        if (err) 
+            throw err;
+        
+
+        if (doc) 
+            res.send('User Already Exists');
+        
+
         if (!doc) {
             const newUser = new User({username});
             const registeredUser = await User.register(newUser, password);
@@ -50,6 +73,8 @@ router.post('/register', (req, res) => {
             req.logIn(registeredUser, err => {
                 if (err) 
                     throw err;
+                
+
                 res.send(true);
                 console.log('logging in', req.user.username);
             });
@@ -57,6 +82,16 @@ router.post('/register', (req, res) => {
     })
     console.log(req.body);
 });
+
+const validateUsername = (input) => {
+    const regularExpression = /^[A-Za-z][A-Za-z0-9]{3,23}$/;
+    return regularExpression.test(input);
+};
+
+const validatePassword = (input) => {
+    const regularExpression = /.{8,24}/;
+    return regularExpression.test(input);
+};
 
 router.post('/friendRequest', isLoggedIn, async (req, res) => {
     // user id
@@ -68,8 +103,7 @@ router.post('/friendRequest', isLoggedIn, async (req, res) => {
         if (request) {
             console.log('friend request already exists');
             res.send(true);
-        }
-        else {
+        } else {
             recipient.friendRequests.push(req.user.id);
             console.log('sending new friend request');
             await recipient.save();
@@ -81,7 +115,7 @@ router.post('/friendRequest', isLoggedIn, async (req, res) => {
     // check if recipient already has a friend request from the user
     // if not, then send friend request
     // if yes, do nothing
-    
+
 });
 
 router.post('/acceptFriendRequest', isLoggedIn, async (req, res) => {
@@ -112,15 +146,15 @@ router.post('/declineFriendRequest', isLoggedIn, async (req, res) => {
     req.user.friendRequests = req.user.friendRequests.filter(x => {
         return x._id.toString() !== friend._id.toString();
     });
-    
+
     await req.user.save();
-    res.send({id:friend._id, username: friend.username});
+    res.send({id: friend._id, username: friend.username});
 });
 
-router.delete('/deleteFriend', isLoggedIn, async(req, res)=> {
+router.delete('/deleteFriend', isLoggedIn, async (req, res) => {
     const friend = await User.findById(req.body.id);
 
-    friend.friends = friend.friends.filter(x=> {
+    friend.friends = friend.friends.filter(x => {
         return x._id.toString() !== req.user._id.toString();
     })
 
@@ -134,12 +168,29 @@ router.delete('/deleteFriend', isLoggedIn, async(req, res)=> {
     res.send(friend._id);
 })
 
-router.get('/logout', isLoggedIn, (req, res) => {
+router.get('/logout', isLoggedIn, async (req, res) => {
     req.logOut((err) => {
-        if (err) throw err;
+        if (err) 
+            throw err;
+        
+
+        req.user.online = false;
+        req.user.save();
         console.log('Logged out successfully');
         res.send('Logged out successfully');
     })
 });
+
+router.put('/connect', isLoggedIn, async (req, res) => {
+    req.user.online = true;
+    await req.user.save();
+    res.send("User connected to socket");
+});
+
+router.put('/disconnect', async (req, res) => {
+    req.user.online = false;
+    await req.user.save();
+    res.send("User disconnected from socket");
+})
 
 module.exports = router;

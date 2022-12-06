@@ -18,6 +18,8 @@ const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendReque
   const channelTitle = useAppSelector((state) => state.channels.selectedChannel.title);
   const view = useAppSelector((state) => state.views.view);
 
+  const socketID = useAppSelector((state) => state.user.socketID);
+
   const displayChannelTitle = () => {
     return channelTitle ? channelTitle.replace(" ", "-") : "";
   }
@@ -32,10 +34,13 @@ const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendReque
           : view === Views.REQUESTS ?
             <h6 className='text-muted p-2 m-0'>Friend Requests</h6>
             : view === Views.DIRECT_MESSAGE ?
-              <FriendTitle deleteFriend={deleteFriend}/>
+              <FriendTitle deleteFriend={deleteFriend} />
               : null
         }
       </div>
+
+      <p>socket ID: {socketID}</p>
+
       {view === Views.SERVERS ?
         <MessageList />
         : view === Views.FRIENDS ?

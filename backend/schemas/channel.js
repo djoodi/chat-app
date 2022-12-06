@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const { nextTick } = require('process');
 const Message = require('./message');
 const Schema = mongoose.Schema;
 
+// This will also serve our as private DM rooms
 const ChannelSchema = new Schema({
     title: {
         type: String,

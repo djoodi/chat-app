@@ -15,6 +15,10 @@ const UserSchema = Schema({
     friendRequests: [{
         type: Schema.Types.ObjectId,
         ref:'User'
+    }],
+    online: [{
+        type: Boolean,
+        required: true
     }]
 });
 

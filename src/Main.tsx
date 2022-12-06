@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Axios from 'axios';
+import { io } from 'socket.io-client';
 import ServerList from './components/ServerList';
 import ChannelList from './components/ChannelList';
 import MemberList from './components/MemberList';
@@ -7,10 +8,15 @@ import MessagePanel from './components/MessagePanel';
 import './components/styles.css';
 import { IServer, IChannel, IEditChannelAction } from './models';
 import { useAppSelector, useAppDispatch } from './store/store'
-import { clearUser, setUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend } from './store/userSlice';
+import { clearUser, setUser, removeFriendRequest, addFriend, removeFriend, setSocketID } from './store/userSlice';
 import { addServer, removeServer, renameServer, setSelectedServer, setServers } from './store/serversSlice';
 import { addChannel, setSelectedChannel, setChannels } from './store/channelsSlice';
 import * as Views from './views';
+
+const socket = io('http://localhost:4000', {
+  withCredentials: true,
+  autoConnect: true
+});
 
 const Main = () => {
 
@@ -237,12 +243,42 @@ const Main = () => {
     });
   };
 
+  const onSocketConnect = () => {
+    Axios({
+      method: 'PUT',
+      withCredentials: true,
+      url: 'http://localhost:4000/connect'
+    }).then((res) => {
+      console.log(res);
+    })
+  }
+
+  const onSocketDisconnect = () => {
+    Axios({
+      method: 'PUT',
+      withCredentials: true,
+      url: 'http://localhost:4000/disconnect'
+    }).then((res) => {
+      console.log(res);
+    })
+  }
+
   const didMount = useRef(false);
 
   useEffect(() => {
     isLoggedIn();
     getUser();
     getServers();
+
+    socket.on('connect', () => {
+      dispatch(setSocketID(socket.id));
+      onSocketConnect();
+    });
+
+    socket.on('disconnect', () => {
+      dispatch(setSocketID(''));
+      onSocketDisconnect();
+    });
 
     if (!didMount.current) {
       didMount.current = true;
@@ -252,7 +288,7 @@ const Main = () => {
     getChannels(servers.selectedServer.id);
 
     return () => {
-
+      socket.off('connect');
     }
   }, [servers.servers])
 

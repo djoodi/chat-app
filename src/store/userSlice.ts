@@ -7,7 +7,8 @@ const initialState = {
     username: '',
     friends: [] as IMember[],
     friendRequests: [] as IMember[],
-    selectedFriend: {} as IMember
+    selectedFriend: {} as IMember,
+    socketID: ''
 }
 
 export const userSlice = createSlice({
@@ -42,9 +43,12 @@ export const userSlice = createSlice({
         // takes an object of id and username
         setSelectedFriend: (state, action) => {
             state.selectedFriend = action.payload;
+        },
+        setSocketID: (state, action) => {
+            state.socketID = action.payload;
         }
     }
 });
 
-export const { setUser, clearUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend, setSelectedFriend } = userSlice.actions
+export const { setUser, clearUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend, setSelectedFriend, setSocketID } = userSlice.actions
 export default userSlice.reducer;

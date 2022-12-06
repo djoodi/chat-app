@@ -11,6 +11,8 @@ interface Props {
 }
 
 const FriendRequest: React.FC<Props> = ({ requester, acceptFriendRequest,declineFriendRequest }) => {
+
+
     return (
         <div className='d-flex p-2 gap-2 border-bottom'>
             <p className='mb-0 mt-1 ms-2 text-muted me-auto align-text-bottom'>{requester.username}</p>

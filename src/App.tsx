@@ -35,7 +35,7 @@ function App() {
 
     setTimeout(() => { 
       setShow(false);
-    }, 3000);
+    }, 5000);
   }
 
   const register = (e: React.FormEvent) => {
@@ -49,6 +49,16 @@ function App() {
     setValidated(true);
 
     if (!authInput.username || !authInput.password) return;
+
+    if (!validateUsername(authInput.username)) {
+      flashError("Username must contain alphanumeric characters only and be between 4-24 characters long. It cannot begin with a number.");
+      return;
+    }
+
+    if (!validatePassword(authInput.password)) {
+      flashError("Password must be 8-24 characters long");
+      return;
+    }
 
     Axios({
       method: "POST",
@@ -69,6 +79,16 @@ function App() {
       }
     });
   };
+
+  const validateUsername = (input: string) => {
+    const regularExpression = /^[A-Za-z][A-Za-z0-9]{3,23}$/;
+    return regularExpression.test(input);
+  }
+
+  const validatePassword = (input: string) => {
+    const regularExpression = /.{8,24}/;
+    return regularExpression.test(input);
+  }
 
   const login = (e: React.FormEvent) => {
     e.preventDefault();
