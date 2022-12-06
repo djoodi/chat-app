@@ -56,7 +56,7 @@ function App() {
     }
 
     if (!validatePassword(authInput.password)) {
-      flashError("Password must be 8-24 characters long");
+      flashError("Password must be 8-24 characters long.");
       return;
     }
 

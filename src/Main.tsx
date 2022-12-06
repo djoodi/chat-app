@@ -28,6 +28,7 @@ const Main = () => {
   // TODO define interfaces
 
   const isLoggedIn = () => {
+    console.log("checking if logged in")
     Axios({
       method: 'GET',
       withCredentials: true,

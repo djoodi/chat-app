@@ -169,13 +169,13 @@ router.delete('/deleteFriend', isLoggedIn, async (req, res) => {
 })
 
 router.get('/logout', isLoggedIn, async (req, res) => {
+    req.user.online = false;
+    req.user.save();
+
     req.logOut((err) => {
         if (err) 
             throw err;
-        
 
-        req.user.online = false;
-        req.user.save();
         console.log('Logged out successfully');
         res.send('Logged out successfully');
     })
