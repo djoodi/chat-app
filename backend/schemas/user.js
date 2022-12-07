@@ -9,17 +9,23 @@ const UserSchema = Schema({
         ref: 'Server'
     }],
     friends: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+        id: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+            },
+        roomID: {
+            type: String,
+            required: true
+        }
     }],
     friendRequests: [{
         type: Schema.Types.ObjectId,
         ref:'User'
-    }],
-    online:{
-        type: Boolean,
-        required: true
-    }
+    }]
+    // online:{
+    //     type: Boolean,
+    //     required: true
+    // }
 });
 
 UserSchema.plugin(passportLocalMongoose);

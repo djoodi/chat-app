@@ -1,5 +1,5 @@
 const Server = require('../schemas/server');
-const Channel = require('../schemas/channel');
+const Room = require('../schemas/room');
 const User = require('../schemas/user');
 const express = require('express');
 const router = express.Router();
@@ -15,18 +15,18 @@ router.get('/index', isLoggedIn, async(req, res)=> {
 router.post('/create', isLoggedIn, async (req, res)=>{
     const {title, id} = req.body;
     const user = await User.findById(id);
-    const channel = new Channel({title:"#general"});
-    await channel.save();
+    const room = new Room({title:"#general"});
+    await room.save();
     const server = new Server({
         title,
         author: user._id,
         members: [user._id],
-        channels: [channel._id]
+        rooms: [room._id]
     });
     user.servers.push(server._id);
     await user.save();
     await server.save();
-    res.send({server, channel});
+    res.send({server, room});
 });
 
 router.put('/edit', isLoggedIn, isAuthor, async(req, res) => {

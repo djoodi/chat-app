@@ -9,7 +9,7 @@ const initialState = {
     friendRequests: [] as IMember[],
     selectedFriend: {} as IMember,
     socketID: '',
-    online: true
+    online: false
 }
 
 export const userSlice = createSlice({
@@ -51,5 +51,5 @@ export const userSlice = createSlice({
     }
 });
 
-export const { setUser, clearUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend, setSelectedFriend, setSocketID } = userSlice.actions
+export const { setUser, clearUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend, setSelectedFriend, setSocketID} = userSlice.actions
 export default userSlice.reducer;

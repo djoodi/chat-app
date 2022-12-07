@@ -1,8 +1,6 @@
-const { channel } = require('diagnostics_channel');
-const { Server } = require('http');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Channel = require('./channel');
+const Room = require('./room');
 
 const ServerSchema = new Schema({
     author: {
@@ -19,9 +17,9 @@ const ServerSchema = new Schema({
         ref: 'User',
         required: true
     }],
-    channels: [{
+    rooms: [{
         type: Schema.Types.ObjectId,
-        ref: 'Channel',
+        ref: 'Room',
     }],
 });
 
@@ -29,9 +27,9 @@ const ServerSchema = new Schema({
 
 ServerSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
-        await Channel.deleteMany({
+        await Room.deleteMany({
             _id: {
-                $in: doc.channels
+                $in: doc.rooms
             }
         })
     }
@@ -39,9 +37,9 @@ ServerSchema.post('findOneAndDelete', async function (doc) {
 
 ServerSchema.post('deleteMany', async function (doc) {
     if (doc) {
-        await Channel.deleteMany({
+        await Room.deleteMany({
             _id: {
-                $in: doc.channels
+                $in: doc.rooms
             }
         })
     }

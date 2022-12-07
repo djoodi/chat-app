@@ -4,16 +4,18 @@ const router = express.Router();
 const passport = require('passport');
 const {isLoggedIn} = require('../middleware');
 const Server = require('../schemas/server');
-const user = require('../schemas/user');
+const Room = require('../schemas/room');
 
 // routes
 router.get('/user', isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.user._id).populate('friends', '_id username online').populate('friendRequests', '_id username');
+    const user = await User.findById(req.user._id).populate('friends', '_id username').populate('friendRequests', '_id username');
     console.log(user);
     res.send(user);
 });
 
 router.get('/app', isLoggedIn, (req, res) => { // this route only exists to check if user is logged in
+    // this won't send if isLoggedIn fails
+    res.send(true);
 });
 
 router.get('/members/:id', isLoggedIn, async (req, res) => {
@@ -121,9 +123,14 @@ router.post('/friendRequest', isLoggedIn, async (req, res) => {
 router.post('/acceptFriendRequest', isLoggedIn, async (req, res) => {
     console.log('accepted friend request from', req.body.id);
     const friend = await User.findById(req.body.id);
+
+    // create a room
+    const room = new Room();
+    await room.save();
+
     // update both users friend lists
-    req.user.friends.push(friend._id);
-    friend.friends.push(req.user._id);
+    req.user.friends.push({id:friend._id, roomID: room._id});
+    friend.friends.push({id: req.user._id, roomID: room._id});
 
     // remove friend request
     req.user.friendRequests = req.user.friendRequests.filter(x => {
@@ -169,8 +176,8 @@ router.delete('/deleteFriend', isLoggedIn, async (req, res) => {
 })
 
 router.get('/logout', isLoggedIn, async (req, res) => {
-    req.user.online = false;
-    req.user.save();
+    // req.user.online = false;
+    // req.user.save();
 
     req.logOut((err) => {
         if (err) 
@@ -182,14 +189,14 @@ router.get('/logout', isLoggedIn, async (req, res) => {
 });
 
 router.put('/connect', isLoggedIn, async (req, res) => {
-    req.user.online = true;
-    await req.user.save();
+    // req.user.online = true;
+    // await req.user.save();
     res.send("User connected to socket");
 });
 
 router.put('/disconnect', async (req, res) => {
-    req.user.online = false;
-    await req.user.save();
+    // req.user.online = false;
+    // await req.user.save();
     res.send("User disconnected from socket");
 })
 

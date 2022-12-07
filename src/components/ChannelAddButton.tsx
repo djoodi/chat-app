@@ -66,7 +66,7 @@ const ChannelAddButton: React.FC<Props> = ({ createChannelReq }) => {
 
             <InputGroup>
               <InputGroup.Text>#</InputGroup.Text>
-              <Form.Control type='text' placeholder='server title' autoFocus value={channelTitle} onChange={e => { setChannelTitle(e.target.value) }} />
+              <Form.Control type='text' placeholder='channel title' autoFocus value={channelTitle} onChange={e => { setChannelTitle(e.target.value) }} />
             </InputGroup>
           </Modal.Body>
           <Modal.Footer className='d-flex flex-row'>

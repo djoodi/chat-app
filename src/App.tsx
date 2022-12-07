@@ -7,7 +7,6 @@ import Login from './components/Login';
 import Register from './components/Register';
 import { IAuth } from './models';
 import { Alert, Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
-import { useAppSelector, useAppDispatch } from './store/store';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
@@ -15,11 +14,6 @@ const socket = io('http://localhost:4000', {
 });
 
 function App() {
-
-  const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
-  const [server, setServer] = useState<any>(null);
-  const [socketID, setSocketID] = useState<string>('');
-
 
   const [activeTab, setActiveTab] = useState<string>('login');
   const [authInput, setAuthInput] = useState<IAuth>({ username: "", password: "" });
@@ -122,41 +116,27 @@ function App() {
     });
   };
 
-  const connectToSocket = () => {
-    socket.connect();
+  const checkIfAlreadyLoggedIn = () => {
+    console.log("checking if logged in");
+    Axios({
+      method: 'GET',
+      withCredentials: true,
+      url: 'http://localhost:4000/app'
+    }).then((res) => {
+      if (res.data !== false) {
+        window.location.href = '/app';
+      }
+    })
   }
-
-  const sendMessage = () => {
-    socket.emit("message", { message, serverID: server._id });
-    setMessage('');
-  }
-
-  // const getSocketInfo = () => {
-  //   socket.emit('whoami', (username: string) => {
-  //     setUsername(username);
-  //   })
-  // }
 
   useEffect(() => {
-
-    socket.on('connect', () => {
-      setSocketID(socket.id);
-
-      // getSocketInfo();
-
-      setIsConnected(true);
-    });
-
-    socket.on('disconnect', () => {
-      setIsConnected(false);
-    });
-
+    checkIfAlreadyLoggedIn()
+  
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
+     
     }
   }, [])
-
+  
 
   return (
     <main className="App">

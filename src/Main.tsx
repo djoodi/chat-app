@@ -87,8 +87,8 @@ const Main = () => {
       url: 'http://localhost:4000/servers/create'
     }).then((res) => {
       dispatch(addServer({ id: res.data.server._id, title: res.data.server.title }));
-      dispatch(setChannels([{ id: res.data.channel._id, title: res.data.channel.title }]));
-      dispatch(setSelectedChannel({ id: res.data.channel._id }));
+      dispatch(setChannels([{ id: res.data.room._id, title: res.data.room.title }]));
+      dispatch(setSelectedChannel({ id: res.data.room._id }));
     });
   };
 
@@ -128,7 +128,7 @@ const Main = () => {
     Axios({
       method: 'GET',
       withCredentials: true,
-      url: `http://localhost:4000/channels/index/${serverID}`
+      url: `http://localhost:4000/rooms/index/${serverID}`
     }).then(res => {
       if (res.data.length) {
         dispatch(setChannels(res.data.map((channel: any) => {
@@ -147,7 +147,7 @@ const Main = () => {
         id: servers.selectedServer.id,
         channelTitle
       },
-      url: 'http://localhost:4000/channels/create/'
+      url: 'http://localhost:4000/rooms/create/'
     }).then(res => {
       dispatch(addChannel({ id: res.data._id, title: res.data.title }));
     })
@@ -165,7 +165,7 @@ const Main = () => {
         edits,
         deletes
       },
-      url: 'http://localhost:4000/channels/edit'
+      url: 'http://localhost:4000/rooms/edit'
     }).then(res => {
       getChannels(servers.selectedServer.id); // TODO: doing this as a test. you should just delete them client side instead of making this call
       // actually, you will need to make some sort of socket event so all subscribed users (users in the server that are online) see the update
@@ -290,6 +290,7 @@ const Main = () => {
 
     return () => {
       socket.off('connect');
+      socket.off('disconnect');
     }
   }, [servers.servers])
 
