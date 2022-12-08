@@ -5,12 +5,12 @@ const passportLocalMongoose = require('passport-local-mongoose');
 
 const UserSchema = Schema({
     servers: [{
-        type: Schema.Types.ObjectId,
+        type: Schema.ObjectId,
         ref: 'Server'
     }],
     friends: [{
-        id: {
-            type: Schema.Types.ObjectId,
+        friend: {
+            type: Schema.ObjectId,
             ref: 'User'
             },
         roomID: {
@@ -19,7 +19,7 @@ const UserSchema = Schema({
         }
     }],
     friendRequests: [{
-        type: Schema.Types.ObjectId,
+        type: Schema.ObjectId,
         ref:'User'
     }]
     // online:{

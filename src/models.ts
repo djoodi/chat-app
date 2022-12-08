@@ -21,5 +21,8 @@ export interface IEditChannelAction {
 export interface IMember {
     id: string;
     username: string;
-    online: boolean;
+}
+
+export interface IFriend extends IMember {
+    roomID: string;
 }

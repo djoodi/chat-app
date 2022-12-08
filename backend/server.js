@@ -78,6 +78,7 @@ io.use((socket, next)=>{
     console.log('checking authorization')
 
     if (socket.request.user) {
+        console.log(user.username);
         next();
     } else {
         console.log('not authorized');
@@ -92,27 +93,23 @@ io.on('connection', (socket)=> {
         console.log('disconnected', socket.id);
     })
 
-    socket.on('whoami', (cb)=>{
-        cb(socket.request.user ? socket.request.user.username : '');
-    })
-
     const session = socket.request.session;
     console.log(`saving sid ${socket.id} in session ${session.id}`);
     session.socketId = socket.id;
     session.save();
     
-    socket.on("message", async (data)=> {
-        console.log(data);
-        const newMessage = new Message({
-            timestamp: Date(),
-            message: data.message,
-            author: socket.request.user._id
-        });
-        const server = await Server.findById(data.serverID);
-        server.messages.push(newMessage._id);
-        await newMessage.save();
-        await server.save();
-    })
+    // socket.on("message", async (data)=> {
+    //     console.log(data);
+    //     const newMessage = new Message({
+    //         timestamp: Date(),
+    //         message: data.message,
+    //         author: socket.request.user._id
+    //     });
+    //     const server = await Server.findById(data.serverID);
+    //     server.messages.push(newMessage._id);
+    //     await newMessage.save();
+    //     await server.save();
+    // })
 });
 
 server.listen(4000, ()=> {

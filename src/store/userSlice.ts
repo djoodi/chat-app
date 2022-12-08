@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IMember } from "../models";
+import { IMember, IFriend } from "../models";
 
 
 const initialState = {
     id: '',
     username: '',
-    friends: [] as IMember[],
+    friends: [] as IFriend[],
     friendRequests: [] as IMember[],
-    selectedFriend: {} as IMember,
+    selectedFriend: {} as IFriend,
     socketID: '',
     online: false
 }
@@ -33,15 +33,15 @@ export const userSlice = createSlice({
         removeFriendRequest: (state, action) => {
             state.friendRequests = state.friendRequests.filter(x => x.id !== action.payload)
         },
-        // takes an object of id and username
+        // takes an object of id, username, and roomID
         addFriend: (state, action) => {
             state.friends.push(action.payload);
         },
         // takes an ID
         removeFriend: (state, action) => {
-            state.friends = state.friends.filter(x => x.id !== action.payload)
+            state.friends = state.friends.filter(x => x.id !== action.payload);
         },
-        // takes an object of id and username
+        // takes an object of id, username, and roomID
         setSelectedFriend: (state, action) => {
             state.selectedFriend = action.payload;
         },

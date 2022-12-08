@@ -127,7 +127,7 @@ function App() {
         window.location.href = '/app';
       }
     })
-  }
+  };
 
   useEffect(() => {
     checkIfAlreadyLoggedIn()

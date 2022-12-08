@@ -8,12 +8,13 @@ const Room = require('../schemas/room');
 
 // routes
 router.get('/user', isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.user._id).populate('friends', '_id username').populate('friendRequests', '_id username');
+    const user = await User.findById(req.user._id).populate({path: 'friends', populate: {path: '_id', select: '_id username'}}).populate('friendRequests', '_id username');
     console.log(user);
     res.send(user);
 });
 
-router.get('/app', isLoggedIn, (req, res) => { // this route only exists to check if user is logged in
+router.get('/app', isLoggedIn, (req, res) => {
+    // this route only exists to check if user is logged in
     // this won't send if isLoggedIn fails
     res.send(true);
 });
@@ -29,13 +30,15 @@ router.post('/login', (req, res, next) => {
             throw err;
         
 
-        if (! user) 
+
+        if (!user) 
             res.send('Wrong username or password');
          else {
             req.logIn(user, err => {
                 if (err) 
                     throw err;
                 
+
 
                 res.send(true);
                 console.log('logging in', req.user.username);
@@ -64,9 +67,11 @@ router.post('/register', (req, res) => {
             throw err;
         
 
+
         if (doc) 
             res.send('User Already Exists');
         
+
 
         if (!doc) {
             const newUser = new User({username});
@@ -76,6 +81,7 @@ router.post('/register', (req, res) => {
                 if (err) 
                     throw err;
                 
+
 
                 res.send(true);
                 console.log('logging in', req.user.username);
@@ -129,8 +135,8 @@ router.post('/acceptFriendRequest', isLoggedIn, async (req, res) => {
     await room.save();
 
     // update both users friend lists
-    req.user.friends.push({id:friend._id, roomID: room._id});
-    friend.friends.push({id: req.user._id, roomID: room._id});
+    req.user.friends.push({_id: friend._id, roomID: room._id});
+    friend.friends.push({_id: req.user._id, roomID: room._id});
 
     // remove friend request
     req.user.friendRequests = req.user.friendRequests.filter(x => {
@@ -182,6 +188,7 @@ router.get('/logout', isLoggedIn, async (req, res) => {
     req.logOut((err) => {
         if (err) 
             throw err;
+        
 
         console.log('Logged out successfully');
         res.send('Logged out successfully');

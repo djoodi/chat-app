@@ -50,13 +50,12 @@ const Main = () => {
       dispatch(setUser({
         id: res.data._id,
         username: res.data.username,
-        friends: res.data.friends.map((x: { _id: string, username: string, online: boolean}) => {
-          return { id: x._id, username: x.username, online: x.online };
+        friends: res.data.friends.map((x: { _id:{_id: string, username: string}, roomID: string}) => {
+          return { id: x._id._id, username: x._id.username, roomID: x.roomID};
         }),
         friendRequests: res.data.friendRequests.map((x: { _id: string, username: string }) => {
           return { id: x._id, username: x.username }
-        }
-        )
+        })
       }));
     });
   };
