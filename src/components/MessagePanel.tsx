@@ -11,9 +11,10 @@ interface Props {
   acceptFriendRequest: (id: string) => void;
   declineFriendRequest: (id: string) => void;
   deleteFriend: (id: string) => void;
+  sendMessage: (message: string) => void;
 }
 
-const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendRequest, deleteFriend }) => {
+const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendRequest, deleteFriend, sendMessage }) => {
 
   const channelTitle = useAppSelector((state) => state.channels.selectedChannel.title);
   const view = useAppSelector((state) => state.views.view);
@@ -51,7 +52,7 @@ const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendReque
           : view === Views.REQUESTS ?
             <FriendRequestList acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} />
             : null}
-      <MessageInput />
+      <MessageInput sendMessage={sendMessage}/>
     </div>
   )
 }

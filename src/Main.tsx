@@ -15,7 +15,7 @@ import * as Views from './views';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
-  autoConnect: true
+  autoConnect: false
 });
 
 const Main = () => {
@@ -45,16 +45,15 @@ const Main = () => {
       method: 'GET',
       withCredentials: true,
       url: 'http://localhost:4000/user'
-    }).then((res) => {
-      console.log(res);
+    }).then(async (res) => {
       dispatch(setUser({
         id: res.data._id,
         username: res.data.username,
-        friends: res.data.friends.map((x: { _id:{_id: string, username: string}, roomID: string}) => {
-          return { id: x._id._id, username: x._id.username, roomID: x.roomID};
+        friends: res.data.friends.map((x: { _id: { _id: string; username: string; }; roomID: string; }) => {
+          return { id: x._id._id, username: x._id.username, roomID: x.roomID };
         }),
-        friendRequests: res.data.friendRequests.map((x: { _id: string, username: string }) => {
-          return { id: x._id, username: x.username }
+        friendRequests: res.data.friendRequests.map((x: { _id: string; username: string; }) => {
+          return { id: x._id, username: x.username };
         })
       }));
     });
@@ -243,24 +242,9 @@ const Main = () => {
     });
   };
 
-  const onSocketConnect = () => {
-    Axios({
-      method: 'PUT',
-      withCredentials: true,
-      url: 'http://localhost:4000/connect'
-    }).then((res) => {
-      console.log(res);
-    })
-  }
-
-  const onSocketDisconnect = () => {
-    Axios({
-      method: 'PUT',
-      withCredentials: true,
-      url: 'http://localhost:4000/disconnect'
-    }).then((res) => {
-      console.log(res);
-    })
+  const sendMessage = (message: string) => {
+    const room = user.selectedFriend.roomID;
+    socket.emit('message', {room, message});
   }
 
   const didMount = useRef(false);
@@ -270,14 +254,20 @@ const Main = () => {
     getUser();
     getServers();
 
+    socket.connect();
+
     socket.on('connect', () => {
       dispatch(setSocketID(socket.id));
-      onSocketConnect();
+      socket.emit('join', user.friends.map(x => {
+        console.log(x.roomID);
+        return x.roomID;
+      }));
+      // onSocketConnect();
     });
 
     socket.on('disconnect', () => {
       dispatch(setSocketID(''));
-      onSocketDisconnect();
+      // onSocketDisconnect();
     });
 
     if (!didMount.current) {
@@ -309,6 +299,7 @@ const Main = () => {
           acceptFriendRequest={acceptFriendRequest}
           declineFriendRequest={declineFriendRequest}
           deleteFriend={deleteFriend}
+          sendMessage={sendMessage}
         />
         <MemberList />
       </div>

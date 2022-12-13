@@ -34,11 +34,7 @@ app.use(cors({
     credentials: true
 }));
 
-const sessionMiddleware = session({
-    secret: "secretcode",
-    resave: true,
-    saveUninitialized: true
-});
+const sessionMiddleware = session({secret: "secretcode", resave: true, saveUninitialized: true});
 
 app.use(sessionMiddleware);
 
@@ -61,9 +57,9 @@ app.use('/rooms', roomRoutes);
 // socket.io events
 const io = require("socket.io")(server, {
     cors: {
-      origin: "http://localhost:3000",
-      
-      credentials: true
+        origin: "http://localhost:3000",
+
+        credentials: true
     }
 });
 
@@ -73,12 +69,12 @@ io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
-io.use((socket, next)=>{
-    
+io.use((socket, next) => {
+
     console.log('checking authorization')
 
     if (socket.request.user) {
-        console.log(user.username);
+        console.log(socket.request.user);
         next();
     } else {
         console.log('not authorized');
@@ -86,7 +82,7 @@ io.use((socket, next)=>{
     }
 })
 
-io.on('connection', (socket)=> {
+io.on('connection', (socket) => {
     console.log('new connection', socket.id);
 
     socket.on('disconnect', () => {
@@ -94,10 +90,28 @@ io.on('connection', (socket)=> {
     })
 
     const session = socket.request.session;
-    console.log(`saving sid ${socket.id} in session ${session.id}`);
+    console.log(`saving sid ${
+        socket.id
+    } in session ${
+        session.id
+    }`);
     session.socketId = socket.id;
     session.save();
-    
+
+
+    socket.on('join', (room) => {
+        if (room == null) return;
+        if (room.length == 0) return;
+
+        socket.join(room);
+        console.log(`${socket.id} joined room ${room}`);
+    })
+
+    socket.on("message", (data)=>{
+        console.log(data);
+        io.to(data.room).emit(data.message);
+    })
+
     // socket.on("message", async (data)=> {
     //     console.log(data);
     //     const newMessage = new Message({
@@ -112,6 +126,6 @@ io.on('connection', (socket)=> {
     // })
 });
 
-server.listen(4000, ()=> {
+server.listen(4000, () => {
     console.log('listening on 4000');
 });
