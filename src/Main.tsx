@@ -12,6 +12,7 @@ import { clearUser, setUser, removeFriendRequest, addFriend, removeFriend, setSo
 import { addServer, removeServer, renameServer, setSelectedServer, setServers } from './store/serversSlice';
 import { addChannel, setSelectedChannel, setChannels } from './store/channelsSlice';
 import * as Views from './views';
+import { channel } from 'diagnostics_channel';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
@@ -22,6 +23,8 @@ const Main = () => {
 
   const user = useAppSelector((state) => state.user);
   const servers = useAppSelector((state) => state.servers);
+  const view = useAppSelector((state) => state.views.view);
+  const channelID = useAppSelector((state) => state.channels.selectedChannel.id);
 
   const dispatch = useAppDispatch();
 
@@ -41,6 +44,7 @@ const Main = () => {
   };
 
   const getUser = () => {
+    console.log('getting user');
     Axios({
       method: 'GET',
       withCredentials: true,
@@ -243,7 +247,20 @@ const Main = () => {
   };
 
   const sendMessage = (message: string) => {
-    const room = user.selectedFriend.roomID;
+    const room = (view === Views.DIRECT_MESSAGE) ? 
+      user.selectedFriend.roomID :
+      (view === Views.SERVERS) ?
+        channelID :
+        null;
+    
+    if (room === null) {
+      throw 'Error sending message: no room ID';
+    }
+
+    if (user.socketID === '') {
+      throw 'Error sending message: no socket ID';
+    }
+
     socket.emit('message', {room, message});
   }
 
@@ -254,9 +271,8 @@ const Main = () => {
     getUser();
     getServers();
 
-    socket.connect();
-
     socket.on('connect', () => {
+      console.log(socket.id);
       dispatch(setSocketID(socket.id));
       socket.emit('join', user.friends.map(x => {
         console.log(x.roomID);
@@ -269,6 +285,12 @@ const Main = () => {
       dispatch(setSocketID(''));
       // onSocketDisconnect();
     });
+    
+    socket.on('message', (data)=> {
+      console.log(data);
+    });
+
+    socket.connect();
 
     if (!didMount.current) {
       didMount.current = true;
@@ -280,8 +302,9 @@ const Main = () => {
     return () => {
       socket.off('connect');
       socket.off('disconnect');
+      socket.off('message');
     }
-  }, [servers.servers])
+  }, [servers.servers.length, user.friends.length])
 
   return (
     <div>

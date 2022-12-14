@@ -3,7 +3,7 @@ import { IChannel } from "../models";
 
 const initialState = {
     selectedChannel: {} as IChannel,
-    channels: [] as IChannel[]
+    channels: [] as IChannel[],
 }
 
 export const channelsSlice = createSlice({

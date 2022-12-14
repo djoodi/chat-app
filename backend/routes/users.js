@@ -9,7 +9,8 @@ const Room = require('../schemas/room');
 // routes
 router.get('/user', isLoggedIn, async (req, res) => {
     const user = await User.findById(req.user._id).populate({path: 'friends', populate: {path: '_id', select: '_id username'}}).populate('friendRequests', '_id username');
-    console.log(user);
+    //console.log(user);
+    console.log('Getting user');
     res.send(user);
 });
 
@@ -29,8 +30,6 @@ router.post('/login', (req, res, next) => {
         if (err) 
             throw err;
         
-
-
         if (!user) 
             res.send('Wrong username or password');
          else {
@@ -38,8 +37,6 @@ router.post('/login', (req, res, next) => {
                 if (err) 
                     throw err;
                 
-
-
                 res.send(true);
                 console.log('logging in', req.user.username);
             });

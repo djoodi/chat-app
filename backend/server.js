@@ -74,7 +74,6 @@ io.use((socket, next) => {
     console.log('checking authorization')
 
     if (socket.request.user) {
-        console.log(socket.request.user);
         next();
     } else {
         console.log('not authorized');
@@ -100,6 +99,7 @@ io.on('connection', (socket) => {
 
 
     socket.on('join', (room) => {
+        console.log(room);
         if (room == null) return;
         if (room.length == 0) return;
 

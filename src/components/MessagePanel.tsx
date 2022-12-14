@@ -20,7 +20,8 @@ const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendReque
   const view = useAppSelector((state) => state.views.view);
 
   const socketID = useAppSelector((state) => state.user.socketID);
-  const roomID = useAppSelector((state)=>state.user.selectedFriend.roomID);
+  const friendRoomID = useAppSelector((state)=>state.user.selectedFriend.roomID);
+  const channelRoomID = useAppSelector((state)=>state.channels.selectedChannel.id);
 
 
   const displayChannelTitle = () => {
@@ -43,7 +44,7 @@ const MessagePanel: React.FC<Props> = ({ acceptFriendRequest, declineFriendReque
       </div>
 
       <p>socket ID: {socketID}</p>
-      <p>room ID: {roomID}</p>
+      <p>room ID: {view === Views.SERVERS ? channelRoomID : view === Views.DIRECT_MESSAGE ? friendRoomID : ""}</p>
 
       {view === Views.SERVERS ?
         <MessageList />
