@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from "react-dom/client";
 import './App.css';
 import Axios from 'axios';
-import { io } from 'socket.io-client';
 import Login from './components/Login';
 import Register from './components/Register';
 import { IAuth } from './models';
 import { Alert, Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
 
-const socket = io('http://localhost:4000', {
-  withCredentials: true,
-  autoConnect: false
-});
 
 function App() {
 

@@ -81,12 +81,18 @@ io.use((socket, next) => {
     }
 })
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log('new connection', socket.id);
 
+    socket.on('disconnecting', ()=> {
+        console.log('disconnecting', socket.data.id);
+        console.log(Array.from(socket.rooms));
+        io.to(Array.from(socket.rooms)).emit('onUserDisconnect', socket.data.id);
+    });
+
     socket.on('disconnect', () => {
-        console.log('disconnected', socket.id);
-    })
+        
+    });
 
     const session = socket.request.session;
     console.log(`saving sid ${
@@ -97,14 +103,20 @@ io.on('connection', (socket) => {
     session.socketId = socket.id;
     session.save();
 
+    socket.on('setID', (data) =>{
+        socket.data.id = data;
+    })
 
-    socket.on('join', (room) => {
+    socket.on('join', async (room) => {
         console.log(room);
         if (room == null) return;
         if (room.length == 0) return;
 
         socket.join(room);
         console.log(`${socket.id} joined room ${room}`);
+        const sockets = await io.in(room).fetchSockets();
+        console.log(sockets.map((x)=>{return x.id}));
+        io.to(room).emit('onJoin', sockets.map((x)=>{return x.data.id}));
     })
 
     socket.on("message", (data)=>{

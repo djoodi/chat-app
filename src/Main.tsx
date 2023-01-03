@@ -8,11 +8,12 @@ import MessagePanel from './components/MessagePanel';
 import './components/styles.css';
 import { IServer, IChannel, IEditChannelAction } from './models';
 import { useAppSelector, useAppDispatch } from './store/store'
-import { clearUser, setUser, removeFriendRequest, addFriend, removeFriend, setSocketID } from './store/userSlice';
+import { clearUser, setUser, removeFriendRequest, addFriend, removeFriend, setSocketID, setFriendOnlineStatus } from './store/userSlice';
 import { addServer, removeServer, renameServer, setSelectedServer, setServers } from './store/serversSlice';
 import { addChannel, setSelectedChannel, setChannels } from './store/channelsSlice';
 import * as Views from './views';
 import { channel } from 'diagnostics_channel';
+import { on } from 'process';
 
 const socket = io('http://localhost:4000', {
   withCredentials: true,
@@ -54,7 +55,7 @@ const Main = () => {
         id: res.data._id,
         username: res.data.username,
         friends: res.data.friends.map((x: { _id: { _id: string; username: string; }; roomID: string; }) => {
-          return { id: x._id._id, username: x._id.username, roomID: x.roomID };
+          return { id: x._id._id, username: x._id.username, roomID: x.roomID, isOnline: false };
         }),
         friendRequests: res.data.friendRequests.map((x: { _id: string; username: string; }) => {
           return { id: x._id, username: x.username };
@@ -272,10 +273,13 @@ const Main = () => {
     getServers();
 
     socket.on('connect', () => {
-      console.log(socket.id);
+      console.log('SocketID:', socket.id);
       dispatch(setSocketID(socket.id));
+      //set ID
+      socket.emit('setID', user.id);
+      //join room
       socket.emit('join', user.friends.map(x => {
-        console.log(x.roomID);
+        console.log('RoomID:', x.roomID);
         return x.roomID;
       }));
       // onSocketConnect();
@@ -290,12 +294,24 @@ const Main = () => {
       console.log(data);
     });
 
-    socket.connect();
+    socket.on('onJoin', (data)=> {
+      data.forEach((x: string) => {
+        dispatch(setFriendOnlineStatus({id: x, isOnline: true}));
+      })
+    });
+
+    // for when other users disconnect
+    socket.on('onUserDisconnect', (data)=> {
+      console.log(data, 'disconnected');
+      dispatch(setFriendOnlineStatus({id: data, isOnline: false}));
+    })
 
     if (!didMount.current) {
       didMount.current = true;
       return;
     }
+
+    socket.connect();
 
     getChannels(servers.selectedServer.id);
 

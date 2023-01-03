@@ -45,11 +45,18 @@ export const userSlice = createSlice({
         setSelectedFriend: (state, action) => {
             state.selectedFriend = action.payload;
         },
+        // takes an object of id and isOnline
+        setFriendOnlineStatus: (state, action) => {
+            state.friends.map(x => {
+                if (x.id === action.payload.id)
+                    x.isOnline = action.payload.isOnline;
+            })
+        },
         setSocketID: (state, action) => {
             state.socketID = action.payload;
         }
     }
 });
 
-export const { setUser, clearUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend, setSelectedFriend, setSocketID} = userSlice.actions
+export const { setUser, clearUser, addFriendRequest, removeFriendRequest, addFriend, removeFriend, setSelectedFriend, setSocketID, setFriendOnlineStatus} = userSlice.actions
 export default userSlice.reducer;

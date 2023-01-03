@@ -25,4 +25,5 @@ export interface IMember {
 
 export interface IFriend extends IMember {
     roomID: string;
+    isOnline: boolean;
 }
