@@ -23,7 +23,7 @@ RoomSchema.post('findOneAndDelete', async function (doc) {
     }
 });
 
-RoomSchema.post('deleteMany', async function (doc) {
+RoomSchema.post('deleteOne', async function (doc) {
     if (doc) {
         await Message.deleteMany({
             _id: {

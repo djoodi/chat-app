@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Room = require('./room');
+const User = require('./user');
 
 const ServerSchema = new Schema({
     author: {
@@ -23,25 +24,31 @@ const ServerSchema = new Schema({
     }],
 });
 
-// TODO, delete channels when server is deleted
-
 ServerSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
         await Room.deleteMany({
             _id: {
                 $in: doc.rooms
             }
-        })
+        });
+        await User.updateMany({
+            _id: {$in: doc.members}}, 
+            {$pull: {servers: doc._id}
+        });
     }
 })
 
-ServerSchema.post('deleteMany', async function (doc) {
+ServerSchema.post('deleteOne', async function (doc) {
     if (doc) {
         await Room.deleteMany({
             _id: {
                 $in: doc.rooms
             }
-        })
+        });
+        await User.updateMany({
+            _id: {$in: doc.members}}, 
+            {$pull: {servers: doc._id}
+        });
     }
 })
 

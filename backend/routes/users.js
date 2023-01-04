@@ -6,44 +6,6 @@ const {isLoggedIn} = require('../middleware');
 const Server = require('../schemas/server');
 const Room = require('../schemas/room');
 
-// routes
-router.get('/user', isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.user._id).populate({path: 'friends', populate: {path: '_id', select: '_id username'}}).populate('friendRequests', '_id username');
-    //console.log(user);
-    console.log('Getting user');
-    res.send(user);
-});
-
-router.get('/app', isLoggedIn, (req, res) => {
-    // this route only exists to check if user is logged in
-    // this won't send if isLoggedIn fails
-    res.send(true);
-});
-
-router.get('/members/:id', isLoggedIn, async (req, res) => {
-    const {id} = req.params;
-    const server = await Server.findById(id).populate('members', '_id username');
-});
-
-router.post('/login', (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
-        if (err) 
-            throw err;
-        
-        if (!user) 
-            res.send('Wrong username or password');
-         else {
-            req.logIn(user, err => {
-                if (err) 
-                    throw err;
-                
-                res.send(true);
-                console.log('logging in', req.user.username);
-            });
-        }
-    })(req, res, next);
-});
-
 router.post('/register', (req, res) => {
     const {username, password} = req.body;
 
@@ -88,6 +50,39 @@ router.post('/register', (req, res) => {
     console.log(req.body);
 });
 
+router.post('/login', (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+        if (err) 
+            throw err;
+        
+        if (!user) 
+            res.send('Wrong username or password');
+         else {
+            req.logIn(user, err => {
+                if (err) 
+                    throw err;
+                
+                res.send(true);
+                console.log('logging in', req.user.username);
+            });
+        }
+    })(req, res, next);
+});
+
+router.get('/logout', isLoggedIn, async (req, res) => {
+    // req.user.online = false;
+    // req.user.save();
+
+    req.logOut((err) => {
+        if (err) 
+            throw err;
+        
+
+        console.log('Logged out successfully');
+        res.send('Logged out successfully');
+    })
+});
+
 const validateUsername = (input) => {
     const regularExpression = /^[A-Za-z][A-Za-z0-9]{3,23}$/;
     return regularExpression.test(input);
@@ -97,6 +92,25 @@ const validatePassword = (input) => {
     const regularExpression = /.{8,24}/;
     return regularExpression.test(input);
 };
+
+router.get('/app', isLoggedIn, (req, res) => {
+    // this route only exists to check if user is logged in
+    // this won't send if isLoggedIn fails
+    res.send(true);
+});
+
+router.get('/user', isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.user._id).populate({path: 'friends', populate: {path: '_id', select: '_id username'}}).populate('friendRequests', '_id username');
+    //console.log(user);
+    console.log('Getting user');
+    res.send(user);
+});
+
+
+router.get('/members/:id', isLoggedIn, async (req, res) => {
+    const {id} = req.params;
+    const server = await Server.findById(id).populate('members', '_id username');
+});
 
 router.post('/friendRequest', isLoggedIn, async (req, res) => {
     // user id
@@ -178,19 +192,6 @@ router.delete('/deleteFriend', isLoggedIn, async (req, res) => {
     res.send(friend._id);
 })
 
-router.get('/logout', isLoggedIn, async (req, res) => {
-    // req.user.online = false;
-    // req.user.save();
-
-    req.logOut((err) => {
-        if (err) 
-            throw err;
-        
-
-        console.log('Logged out successfully');
-        res.send('Logged out successfully');
-    })
-});
 
 router.put('/connect', isLoggedIn, async (req, res) => {
     // req.user.online = true;
