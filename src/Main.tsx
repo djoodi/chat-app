@@ -282,12 +282,10 @@ const Main = () => {
         console.log('RoomID:', x.roomID);
         return x.roomID;
       }));
-      // onSocketConnect();
     });
 
     socket.on('disconnect', () => {
       dispatch(setSocketID(''));
-      // onSocketDisconnect();
     });
     
     socket.on('message', (data)=> {
@@ -304,6 +302,10 @@ const Main = () => {
     socket.on('onUserDisconnect', (data)=> {
       console.log(data, 'disconnected');
       dispatch(setFriendOnlineStatus({id: data, isOnline: false}));
+    });
+
+    socket.on('test', data => {
+      console.log(data);
     })
 
     if (!didMount.current) {
@@ -319,6 +321,9 @@ const Main = () => {
       socket.off('connect');
       socket.off('disconnect');
       socket.off('message');
+      socket.off('onJoin');
+      socket.off('onUserDisconnect');
+      socket.off('test');
     }
   }, [servers.servers.length, user.friends.length])
 

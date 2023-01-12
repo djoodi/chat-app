@@ -192,10 +192,11 @@ router.delete('/deleteFriend', isLoggedIn, async (req, res) => {
     res.send(friend._id);
 })
 
+router.put('/test', (req, res) => {
+    req.io.emit('test', 'socket with express router');
+})
 
 router.put('/connect', isLoggedIn, async (req, res) => {
-    // req.user.online = true;
-    // await req.user.save();
     res.send("User connected to socket");
 });
 

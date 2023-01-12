@@ -48,11 +48,6 @@ passport.deserializeUser(User.deserializeUser());
 
 // end of middleware
 
-// routes
-app.use('/', userRoutes);
-app.use('/servers', serverRoutes);
-app.use('/rooms', roomRoutes);
-
 
 // socket.io events
 const io = require("socket.io")(server, {
@@ -137,6 +132,16 @@ io.on('connection', async (socket) => {
     //     await server.save();
     // })
 });
+
+app.use((req,res,next)=>{
+    req.io = io;
+    next();
+});
+
+// routes
+app.use('/', userRoutes);
+app.use('/servers', serverRoutes);
+app.use('/rooms', roomRoutes);
 
 server.listen(4000, () => {
     console.log('listening on 4000');

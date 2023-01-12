@@ -20,8 +20,12 @@ const ServerSchema = new Schema({
     }],
     rooms: [{
         type: Schema.Types.ObjectId,
-        ref: 'Room',
+        ref: 'Room'
     }],
+    invitees: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 ServerSchema.post('findOneAndDelete', async function (doc) {
