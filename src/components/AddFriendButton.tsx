@@ -1,3 +1,4 @@
+import _ from 'passport-local-mongoose';
 import React, { useState } from 'react'
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { IconContext } from 'react-icons'
@@ -16,7 +17,10 @@ const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
     const [friend, setFriend] = useState<string>('');
 
     const flashMessage = (message: string, isSuccess: boolean) => {
-        if (isSuccess) setVariant('success');
+        if (isSuccess) {
+            setVariant('success');
+            setFriend('');
+        }
         else setVariant('danger');
 
         setError(message);
@@ -61,14 +65,6 @@ const AddFriendButton:React.FC<Props> = ({sendFriendRequest}) => {
                         <Alert variant={variant} show={!!error}>{error}</Alert>
                         <Form.Control type='text' placeholder="friend's username" autoFocus value={friend} onChange={e => setFriend(e.target.value)} />
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" type='submit'>
-                            Send Friend Request
-                        </Button>
-                    </Modal.Footer>
                 </Form >
             </Modal>
         </>

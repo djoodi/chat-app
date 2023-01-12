@@ -21,3 +21,12 @@ module.exports.isAuthor = async (req, res, next) => {
     }
     next();
 }
+
+module.exports.isMember = async (req, res, next) =>{
+    const {id} = req.body;
+    const server = await Server.findById(id);
+    if (!server.members.includes(req.user._id)) {
+        throw("User is not a member of server ", server.title);
+    }
+    next();
+}

@@ -113,27 +113,38 @@ router.get('/members/:id', isLoggedIn, async (req, res) => {
 });
 
 router.post('/friendRequest', isLoggedIn, async (req, res) => {
-    // user id
-    // recipient id
     const recipient = await User.findByUsername(req.body.recipient);
+    
+    // check if we sent friend request to self
+    if (recipient.id === req.user.id) {
+        console.log('user sent friend request to self!');
+        res.send({message: "You can't add yourself as a friend!", isSuccess: false});
+        return;
+    }
+
     if (recipient != null) {
-        const request = recipient.friendRequests.includes(req.user.id);
-        console.log(request);
-        if (request) {
+        console.log(recipient);
+        // check if they're already friends
+        if (recipient.friends.find(x => x.id === req.user.id) != undefined)
+        {
+            console.log('users are already friends');
+            res.send({message: "You're already friends!", isSuccess: false});
+        }
+        // check if friend request already exists
+        else if (recipient.friendRequests.includes(req.user.id)) {
             console.log('friend request already exists');
-            res.send(true);
-        } else {
+            res.send({message: "Friend request already sent", isSuccess: false});
+        }
+        else {
             recipient.friendRequests.push(req.user.id);
-            console.log('sending new friend request');
+            console.log('sent friend request');
             await recipient.save();
-            res.send(true);
+            res.send({message: "Sent friend request!", isSuccess: true});
         }
     } else {
-        res.send(false);
+        console.log('user does not exist');
+        res.send({message: "User does not exist", isSuccess: false});
     }
-    // check if recipient already has a friend request from the user
-    // if not, then send friend request
-    // if yes, do nothing
 
 });
 

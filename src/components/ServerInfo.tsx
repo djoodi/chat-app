@@ -20,11 +20,15 @@ const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChan
 
     const [showEditServerModal, setShowEditServerModal] = useState(false);
     const [showRenameModal, setShowRenameModal] = useState(false);
+    const [showFriendInviteModal, setShowFriendInviteModal] = useState(false)
 
     const closeRename = () => setShowRenameModal(false);
     const showRename = () => setShowRenameModal(true);
     const closeEdit = () => setShowEditServerModal(false);
     const showEdit = () => setShowEditServerModal(true);
+    const closeInviteFriend = () => setShowFriendInviteModal(false);
+    const showInviteFriend = () => setShowEditServerModal(true);
+
     
 
     return (
@@ -41,6 +45,7 @@ const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChan
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
+                                <Dropdown.Item onClick={() => { showInviteFriend() }}>Invite Friends</Dropdown.Item>
                                 <Dropdown.Item onClick={() => { showRename() }}>Rename Server</Dropdown.Item>
                                 <Dropdown.Item onClick={() => { showEdit() }}>Edit Channels</Dropdown.Item>
                                 <Dropdown.Item className='text-danger' onClick={() => deleteServerReq(selectedServerID)}>Delete Server</Dropdown.Item>
@@ -54,6 +59,8 @@ const ServerInfo: React.FC<Props> = ({deleteServerReq, renameServerReq, editChan
             <ServerModalRename closeRename={closeRename} renameServerReq={renameServerReq} showRenameModal={showRenameModal}/>
 
             <ServerModalEdit closeEdit={closeEdit} showEditModal={showEditServerModal} editChannelsReq={editChannelsReq}/>
+
+
 
         </>
     )

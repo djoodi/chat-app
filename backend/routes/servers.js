@@ -3,7 +3,7 @@ const Room = require('../schemas/room');
 const User = require('../schemas/user');
 const express = require('express');
 const router = express.Router();
-const {isLoggedIn, isAuthor} = require('../middleware');
+const {isLoggedIn, isAuthor, isMember} = require('../middleware');
 
 router.get('/index', isLoggedIn, async(req, res)=> {
     const {_id} = req.user;
@@ -43,5 +43,21 @@ router.delete('/delete', isLoggedIn, isAuthor, async(req, res)=>{
     await Server.findByIdAndDelete(id);
     res.send('Server Deleted');
 });
+
+router.post('/sendInvite', isLoggedIn, isMember, async(req, res) => {
+    const {serverID, friendID} = req.body;
+    // Verify that the friend is actually a friend
+    const friend = User.findById(friendID);
+    if (!friend.friends.includes(req.user._id)) {
+        throw ('User being invited to server is not a friend of invite sender');
+    }
+    const server = Server.findById(serverID);
+    const invite = {sender: req.user._id, invitee: friendID};
+    server.invitees.push(invite);
+    //server.save();
+
+    req.io.emit('serverInvite', `${friend.username} is being invited to server ${server.title}`);
+    
+})
 
 module.exports = router;

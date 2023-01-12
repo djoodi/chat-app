@@ -12,7 +12,7 @@ const UserSchema = Schema({
         friend: {
             type: Schema.ObjectId,
             ref: 'User'
-            },
+        },
         roomID: {
             type: String,
             required: true

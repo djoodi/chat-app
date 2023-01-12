@@ -184,11 +184,7 @@ const Main = () => {
       },
       url: 'http://localhost:4000/friendRequest'
     }).then(res => {
-      if (res.data) {
-        callback('Friend Request sent!', true);
-      } else {
-        callback('User does not exist', false);
-      }
+        callback(res.data.message, res.data.isSuccess);
     });
   }
 
@@ -265,6 +261,10 @@ const Main = () => {
     socket.emit('message', {room, message});
   }
 
+  const sendServerInvite = () => {
+    
+  }
+
   const didMount = useRef(false);
 
   useEffect(() => {
@@ -304,7 +304,7 @@ const Main = () => {
       dispatch(setFriendOnlineStatus({id: data, isOnline: false}));
     });
 
-    socket.on('test', data => {
+    socket.on('serverInvite', (data)=>{
       console.log(data);
     })
 
@@ -323,7 +323,6 @@ const Main = () => {
       socket.off('message');
       socket.off('onJoin');
       socket.off('onUserDisconnect');
-      socket.off('test');
     }
   }, [servers.servers.length, user.friends.length])
 
