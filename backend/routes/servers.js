@@ -47,17 +47,44 @@ router.delete('/delete', isLoggedIn, isAuthor, async(req, res)=>{
 router.post('/sendInvite', isLoggedIn, isMember, async(req, res) => {
     const {serverID, friendID} = req.body;
     // Verify that the friend is actually a friend
-    const friend = User.findById(friendID);
+    const friend = await User.findById(friendID);
     if (!friend.friends.includes(req.user._id)) {
         throw ('User being invited to server is not a friend of invite sender');
     }
-    const server = Server.findById(serverID);
+    const server = await Server.findById(serverID);
     const invite = {sender: req.user._id, invitee: friendID};
     server.invitees.push(invite);
-    //server.save();
+    //await server.save();
 
     req.io.emit('serverInvite', `${friend.username} is being invited to server ${server.title}`);
+    res.send(`Sent server invite to ${friend.username}`);
     
+});
+
+router.post('/acceptInvite', isLoggedIn, async (req, res) => {
+    const {serverID, friendID} = req.body;
+    const friend = await User.findById(friendID);
+    const user = await User.findById(req.user._id);
+    if (!friend.friends.includes(req.user._id)) {
+        throw ('Sender of server invite is no longer friends with invitee. Invite is void.');
+    };
+    const server = await Server.findById(serverID);
+    if (server === null) {
+        throw ('Could not find server');
+    }
+    const invitation = server.invitees.filter(x => x.invitee._id === user._id);
+    if (invitation.length <= 0) {
+        throw ('User was not invited to this server');
+    }
+    if (!server.members.includes(friendID)) {
+        throw ('Original sender is not longer in the server. Invite is void');
+    }
+
+    server.members.push(user._id);
+    user.servers.push(server._id);
+    server.invitees = server.invitees.filter(x => x.invitee._id !== user._id && x.sender._id !== friendID);
+    await server.save();
+    await user.save();
 })
 
 module.exports = router;
