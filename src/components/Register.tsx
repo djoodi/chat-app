@@ -39,7 +39,7 @@ const Register : React.FC<Props> = ({authInput, setAuthInput, handleSubmit, vali
                     onChange={e => setAuthInput({ username: authInput.username, password: e.target.value })}
                 />
                 <Form.Control.Feedback type="invalid">
-                    Please enter a password.
+                    Please enter a password that is 8-24 characters long.
                 </Form.Control.Feedback>
             </Form.Group>
             <Button type='submit'>Register</Button>
